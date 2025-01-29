@@ -68,3 +68,19 @@ Ensure you have the following installed:
 
    #The Flask backend should now be running at http://localhost:5000
    ```
+
+## Important step to ensure efficient dependency management
+
+Make sure to append (not overwrite) the server/requirements.txt file with the dependencies. Rule of thumb to follow:
+
+After pulling the changes, run
+
+```sh
+   pip install -r requirements.txt
+```
+
+After installing new packages locally, add them to the server/requirements.txt file by running
+
+```sh
+   pip freeze > requirements.txt
+```
