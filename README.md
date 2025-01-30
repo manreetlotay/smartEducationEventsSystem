@@ -4,9 +4,9 @@
 
 Ensure you have the following installed:
 
-- [Node.js](https://nodejs.org/) (for the frontend)
-- [Python](https://www.python.org/) (for the backend)
-- [pip](https://pip.pypa.io/en/stable/) (Python package manager)
+- [Node.js](https://nodejs.org/) 
+- [Python](https://www.python.org/) 
+- [pip](https://pip.pypa.io/en/stable/) 
 
 ## Runnning the Website (frontend and backend simultaneously) Locally
 
