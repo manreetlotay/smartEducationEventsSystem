@@ -5,6 +5,7 @@ import Landing from "./components/header/Landing";
 import PageNotFound from "./components/status/PageNotFound";
 import EventGallery from "./components/events/eventDashboard/EventGallery";
 import DefaultNavbar from "./components/header/navbar/defaultNavbar";
+import Footer from "./components/footer/Footer";
 
 function App() {
   return (
@@ -22,9 +23,11 @@ function App() {
               <>
                 <DefaultNavbar />
                 <Landing />
+                <Footer />
               </>
             }
           />
+          <Route path="/footer" element={<Footer />} />
         </Routes>
       </Router>
     </>
