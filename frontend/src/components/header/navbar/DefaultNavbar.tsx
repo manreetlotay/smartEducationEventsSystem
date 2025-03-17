@@ -148,7 +148,7 @@ export default function DefaultNavbar() {
             </PopoverPanel>
           </Popover>
 
-          <a href="#" className="text-sm/6 font-semibold text-gray-900">
+          <a href="/events" className="text-sm/6 font-semibold text-gray-900">
             Browse Events
           </a>
           <a href="#" className="text-sm/6 font-semibold text-gray-900">
@@ -214,7 +214,7 @@ export default function DefaultNavbar() {
                   </DisclosurePanel>
                 </Disclosure>
                 <a
-                  href="#"
+                  href="/events"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
                   Browse Events

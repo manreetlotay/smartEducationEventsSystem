@@ -43,3 +43,20 @@ export interface Agenda {
   description: string;
   type: string;
 }
+
+export interface EventDet {
+  id: string;
+  title: string;
+  description: string;
+  date: Date;
+  endDate: Date;
+  isFree: Boolean;
+  price: number;
+  tags: string[];
+  location: string;
+  address: string;
+  organizer: string;
+  imageUrl: string;
+  attendees: number;
+  capacity: number;
+}

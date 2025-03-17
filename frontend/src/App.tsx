@@ -8,6 +8,7 @@ import DefaultNavbar from "./components/header/navbar/DefaultNavbar";
 import Footer from "./components/footer/Footer";
 import FilterEvents from "./components/events/eventDashboard/FilterEvents";
 import EventsPage from "./components/events/EventsPage";
+import EventDetail from "./components/events/EventDetail";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
               </>
             }
           />
+          <Route path="/det/:id" element={<EventDetail />} />
         </Routes>
       </Router>
     </>

@@ -16,7 +16,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
   }).format(event.date);
 
   const handleClick = () => {
-    navigate(`/event/${event.id}`);
+    navigate(`/det/${event.id}`);
   };
 
   return (
