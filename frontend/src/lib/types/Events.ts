@@ -12,7 +12,18 @@ export enum eventFormat {
   HYBRID = "hybrid",
 }
 
-export interface Event extends Agenda {
+export interface Event {
+  id: string;
+  title: string;
+  description: string;
+  date: Date;
+  isFree: boolean;
+  tags: string[];
+  location: string;
+  imageUrl: string;
+}
+
+export interface Eventt extends Agenda {
   eventId: string;
   imageSrc: string;
   location?: string;
