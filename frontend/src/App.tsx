@@ -41,7 +41,15 @@ function App() {
               </>
             }
           />
-          <Route path="/det/:id" element={<EventDetail />} />
+          <Route
+            path="/det/:id"
+            element={
+              <>
+                <DefaultNavbar />
+                <EventDetail />
+              </>
+            }
+          />
         </Routes>
       </Router>
     </>

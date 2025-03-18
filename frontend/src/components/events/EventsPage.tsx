@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import FilterEvents, { FilterState } from "./eventDashboard/FilterEvents";
 import EventsGallery from "./eventDashboard/EventGallery";
 import { Event } from "../../lib/types/Events";
