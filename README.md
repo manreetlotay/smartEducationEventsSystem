@@ -4,9 +4,9 @@
 
 Ensure you have the following installed:
 
-- [Node.js](https://nodejs.org/) 
-- [Python](https://www.python.org/) 
-- [pip](https://pip.pypa.io/en/stable/) 
+- [Node.js](https://nodejs.org/)
+- [Python](https://www.python.org/)
+- [pip](https://pip.pypa.io/en/stable/)
 
 ## Runnning the Website (frontend and backend simultaneously) Locally
 
@@ -34,23 +34,19 @@ Ensure you have the following installed:
    #The React frontend should now be running at http://localhost:5173/.
    ```
 
-### Start the backend Flask Server on Terminal 2
+### Start the backend Django Server on Terminal 2
 
-1. Navigate to the server folder
+1. Create virtual environment
 
    ```sh
-   cd server
+   python -m venv .env
 
    ```
 
-2. Activate python vitual environment
+2. Activate python virtual environment
 
    ```sh
-   #Windows (Command Prompt)
-        venv\Scripts\activate
-
-    #macOS/Linux
-        source venv/bin/activate
+   .\.env\Scripts\Activate # Command for windows
 
    ```
 
@@ -61,12 +57,32 @@ Ensure you have the following installed:
 
    ```
 
-4. Run the Flask Server
+4. Navigate to the backend folder
 
    ```sh
-   python app/app.py
+   cd backend
 
-   #The Flask backend should now be running at http://localhost:5000
+   ```
+
+5. Make database migrations
+
+   ```sh
+   python manage.py makemigrations sees
+
+   ```
+
+6. Create Super User (Optional)
+
+   ```sh
+   python manage.py createsuperuser # Admin page can be accessed from /admin
+
+   ```
+
+7. Run Server
+
+   ```sh
+   python manage.py runserver
+
    ```
 
 ## Important step to ensure efficient dependency management
