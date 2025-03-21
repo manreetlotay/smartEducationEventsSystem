@@ -48,8 +48,8 @@ export interface EventDet {
   id: string;
   title: string;
   description: string;
-  date: Date;
-  endDate: Date;
+  date: string;
+  endDate: string;
   isFree: Boolean;
   price: number;
   tags: string[];
