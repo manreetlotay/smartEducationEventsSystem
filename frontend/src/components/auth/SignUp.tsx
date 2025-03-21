@@ -4,17 +4,18 @@ import { useNavigate } from "react-router-dom";
 export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [affiliation, setAffiliation] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [intent, setIntent] = useState("");
-  // const { signIn, error } = useAuth()
-  // remove thisss const
+  const [profession, setProfession] = useState("");
+  const [organizationName, setOrganizationName] = useState("");
+  const [organizationAddress, setOrganizationAddress] = useState("");
   const [error, setError] = useState("");
-  // const navigate = useNavigate()
+  const [isOrganization, setIsOrganization] = useState(false); // State for checkbox
 
   const handleSubmit = async () => {
-    // await signUp(email, password)
-    // navigate('/viewObj')
+    // Submit logic here
   };
 
   return (
@@ -28,118 +29,266 @@ export default function SignUp() {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form action="#" method="POST" className="space-y-6">
-            <div>
+            {/* Checkbox for "Is Organization" */}
+            <div className="flex items-center">
+              <input
+                id="isOrganization"
+                name="isOrganization"
+                type="checkbox"
+                checked={isOrganization}
+                onChange={(e) => setIsOrganization(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
               <label
-                htmlFor="email"
-                className="block text-sm/6 font-medium text-gray-900"
+                htmlFor="isOrganization"
+                className="ml-2 text-sm font-medium text-gray-900"
               >
-                Email address
+                I am an organization
               </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                  }}
-                  required
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
-                />
-              </div>
             </div>
 
-            <div>
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm/6 font-medium text-gray-900"
-                >
-                  Password
-                </label>
-              </div>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={password}
-                  onChange={(p) => {
-                    setPassword(p.target.value);
-                  }}
-                  required
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
-                />
-              </div>
-            </div>
+            {/* Conditional rendering based on checkbox */}
+            {isOrganization ? (
+              <>
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-sm/6 font-medium text-gray-900"
+                  >
+                    Email address
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                    />
+                  </div>
+                </div>
 
-            <div>
-              <label
-                htmlFor="affiliation"
-                className="block text-sm/6 font-medium text-gray-900"
-              >
-                Affiliation
-              </label>
-              <div className="mt-2">
-                <input
-                  id="affiliation"
-                  name="affiliation"
-                  value={affiliation}
-                  onChange={(a) => {
-                    setAffiliation(a.target.value);
-                  }}
-                  required
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
-                />
-              </div>
-            </div>
+                <div>
+                  <label
+                    htmlFor="password"
+                    className="block text-sm/6 font-medium text-gray-900"
+                  >
+                    Password
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                    />
+                  </div>
+                </div>
 
-            <div>
-              <label
-                htmlFor="phoneNumber"
-                className="block text-sm/6 font-medium text-gray-900"
-              >
-                Phone Number
-              </label>
-              <div className="mt-2">
-                <input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="tel"
-                  value={phoneNumber}
-                  onChange={(pn) => {
-                    setPhoneNumber(pn.target.value);
-                  }}
-                  required
-                  autoComplete="affiliation"
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
-                />
-              </div>
-            </div>
+                <div>
+                  <label
+                    htmlFor="phoneNumber"
+                    className="block text-sm/6 font-medium text-gray-900"
+                  >
+                    Phone Number
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      type="tel"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      required
+                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                    />
+                  </div>
+                </div>
 
-            <div>
-              <label
-                htmlFor="intent"
-                className="block text-sm/6 font-medium text-gray-900"
-              >
-                How Do You Plan to Use the System?
-              </label>
-              <div className="mt-2">
-                <input
-                  id="intent"
-                  name="intent"
-                  type="text"
-                  value={intent}
-                  onChange={(i) => {
-                    setIntent(i.target.value);
-                  }}
-                  required
-                  autoComplete="affiliation"
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
-                />
-              </div>
-            </div>
+                <div>
+                  <label
+                    htmlFor="organizationName"
+                    className="block text-sm/6 font-medium text-gray-900"
+                  >
+                    Organization Name
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="organizationName"
+                      name="organizationName"
+                      value={organizationName}
+                      onChange={(e) => setOrganizationName(e.target.value)}
+                      required
+                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="organizationAddress"
+                    className="block text-sm/6 font-medium text-gray-900"
+                  >
+                    Organization Address
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="organizationAddress"
+                      name="organizationAddress"
+                      value={organizationAddress}
+                      onChange={(e) => setOrganizationAddress(e.target.value)}
+                      required
+                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                    />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Individual Sign-up Inputs */}
+                <div className="flex flex-col sm:flex-row sm:space-x-4 sm:space-y-0 space-y-4">
+                  <div className="sm:w-1/2">
+                    <label
+                      htmlFor="firstName"
+                      className="block text-sm/6 font-medium text-gray-900"
+                    >
+                      First Name
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="firstName"
+                        name="firstName"
+                        value={firstName}
+                        onChange={(fn) => setFirstName(fn.target.value)}
+                        required
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="sm:w-1/2">
+                    <label
+                      htmlFor="lastName"
+                      className="block text-sm/6 font-medium text-gray-900"
+                    >
+                      Last Name
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="lastName"
+                        name="lastName"
+                        value={lastName}
+                        onChange={(ln) => setLastName(ln.target.value)}
+                        required
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-sm/6 font-medium text-gray-900"
+                  >
+                    Email address
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="password"
+                    className="block text-sm/6 font-medium text-gray-900"
+                  >
+                    Password
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="phoneNumber"
+                    className="block text-sm/6 font-medium text-gray-900"
+                  >
+                    Phone Number
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      type="tel"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      required
+                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="profession"
+                    className="block text-sm/6 font-medium text-gray-900"
+                  >
+                    Profession
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="profession"
+                      name="profession"
+                      value={profession}
+                      onChange={(p) => setProfession(p.target.value)}
+                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="affiliation"
+                    className="block text-sm/6 font-medium text-gray-900"
+                  >
+                    Affiliation
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="affiliation"
+                      name="affiliation"
+                      value={affiliation}
+                      onChange={(a) => setAffiliation(a.target.value)}
+                      required
+                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
 
             <div>
               <button
