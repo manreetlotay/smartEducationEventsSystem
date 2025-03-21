@@ -59,8 +59,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
               Pay with Points
             </h4>
             <p className="text-sm text-indigo-700">
-              Use your points to pay for this event. Enter your redemption code
-              below.
+              Use your points to pay for this event. Enter the access code found
+              on your Golden Access Pass in "My Tickets".
             </p>
           </div>
 
