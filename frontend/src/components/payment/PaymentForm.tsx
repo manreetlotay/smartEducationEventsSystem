@@ -25,6 +25,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
     accountName: "",
     accountNumber: "",
     routingNumber: "",
+    // Points redemption
+    serialNumber: "",
     // Common fields
     billingAddress: "",
     city: "",
@@ -44,44 +46,106 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
     onSubmit(formData);
   };
 
+  // Determine which fields need to be shown based on payment method
+  const showCommonFields = paymentMethod !== "points";
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Common Fields */}
-      <div>
-        <label
-          htmlFor="name"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Full Name
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          required
-          value={formData.name}
-          onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
-        />
-      </div>
+      {/* Points redemption fields */}
+      {paymentMethod === "points" && (
+        <div className="space-y-4">
+          <div className="bg-indigo-50 p-4 rounded-md mb-4">
+            <h4 className="text-sm font-medium text-indigo-800 mb-2">
+              Pay with Points
+            </h4>
+            <p className="text-sm text-indigo-700">
+              Use your points to pay for this event. Enter your redemption code
+              below.
+            </p>
+          </div>
 
-      <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Email
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          value={formData.email}
-          onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
-        />
-      </div>
+          <div>
+            <label
+              htmlFor="serialNumber"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Redemption Code / Serial Number
+            </label>
+            <input
+              type="text"
+              id="serialNumber"
+              name="serialNumber"
+              required
+              value={formData.serialNumber}
+              onChange={handleChange}
+              placeholder="Enter redemption code (e.g., XYZ-123456-ABC)"
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              value={formData.email}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              We'll send your confirmation to this email.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Common Fields for other payment methods */}
+      {showCommonFields && (
+        <>
+          <div>
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Full Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              value={formData.name}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              value={formData.email}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+        </>
+      )}
 
       {/* Credit Card Fields */}
       {paymentMethod === "credit-card" && (
@@ -216,86 +280,88 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         </div>
       )}
 
-      {/* Common Address Fields - can be conditionally rendered if needed */}
-      <div className="pt-4 border-t border-gray-200 mt-4">
-        <h4 className="text-sm font-medium text-gray-700 mb-4">
-          Billing Address
-        </h4>
+      {/* Common Address Fields - only if not using points */}
+      {showCommonFields && (
+        <div className="pt-4 border-t border-gray-200 mt-4">
+          <h4 className="text-sm font-medium text-gray-700 mb-4">
+            Billing Address
+          </h4>
 
-        <div>
-          <label
-            htmlFor="billingAddress"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Street Address
-          </label>
-          <input
-            type="text"
-            id="billingAddress"
-            name="billingAddress"
-            required
-            value={formData.billingAddress}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 mt-4">
           <div>
             <label
-              htmlFor="city"
+              htmlFor="billingAddress"
               className="block text-sm font-medium text-gray-700"
             >
-              City
+              Street Address
             </label>
             <input
               type="text"
-              id="city"
-              name="city"
+              id="billingAddress"
+              name="billingAddress"
               required
-              value={formData.city}
+              value={formData.billingAddress}
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
 
-          <div>
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            <div>
+              <label
+                htmlFor="city"
+                className="block text-sm font-medium text-gray-700"
+              >
+                City
+              </label>
+              <input
+                type="text"
+                id="city"
+                name="city"
+                required
+                value={formData.city}
+                onChange={handleChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="zipCode"
+                className="block text-sm font-medium text-gray-700"
+              >
+                ZIP / Postal Code
+              </label>
+              <input
+                type="text"
+                id="zipCode"
+                name="zipCode"
+                required
+                value={formData.zipCode}
+                onChange={handleChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
+              />
+            </div>
+          </div>
+
+          <div className="mt-4">
             <label
-              htmlFor="zipCode"
+              htmlFor="country"
               className="block text-sm font-medium text-gray-700"
             >
-              ZIP / Postal Code
+              Country
             </label>
             <input
               type="text"
-              id="zipCode"
-              name="zipCode"
+              id="country"
+              name="country"
               required
-              value={formData.zipCode}
+              value={formData.country}
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
         </div>
-
-        <div className="mt-4">
-          <label
-            htmlFor="country"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Country
-          </label>
-          <input
-            type="text"
-            id="country"
-            name="country"
-            required
-            value={formData.country}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
-      </div>
+      )}
 
       <div className="pt-6 border-t border-gray-200 flex justify-between">
         <button
@@ -310,7 +376,9 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
           type="submit"
           className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#655967] hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
-          Pay ${eventPrice.toFixed(2)}
+          {paymentMethod === "points"
+            ? "Redeem Points"
+            : `Pay $${eventPrice.toFixed(2)}`}
         </button>
       </div>
     </form>

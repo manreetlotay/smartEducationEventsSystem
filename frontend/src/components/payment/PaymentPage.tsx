@@ -49,7 +49,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({
           <>
             <div className="px-6 py-8 bg-[#655967]">
               <h2 className="text-xl font-bold text-white text-center">
-                Complete Registration
+                Complete Payment
               </h2>
             </div>
 

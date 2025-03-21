@@ -1,6 +1,6 @@
 // PaymentMethods.tsx
 import React from "react";
-import { CreditCard, Wallet, Building } from "lucide-react";
+import { CreditCard, Wallet, Building, Gift } from "lucide-react";
 
 interface PaymentMethodsProps {
   selectedMethod: string;
@@ -26,6 +26,11 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
       id: "bank-transfer",
       name: "Bank Transfer",
       icon: <Building className="h-5 w-5" />,
+    },
+    {
+      id: "points",
+      name: "Pay with Points",
+      icon: <Gift className="h-5 w-5" />,
     },
   ];
 
