@@ -283,10 +283,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       {/* Common Address Fields - only if not using points */}
       {showCommonFields && (
         <div className="pt-4 border-t border-gray-200 mt-4">
-          <h4 className="text-sm font-medium text-gray-700 mb-4">
-            Billing Address
-          </h4>
-
           <div>
             <label
               htmlFor="billingAddress"
@@ -367,7 +363,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         <button
           type="button"
           onClick={onCancel}
-          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500"
         >
           Cancel
         </button>

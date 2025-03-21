@@ -640,7 +640,7 @@ const EventDetail: React.FC = () => {
                 {/* Registration button */}
                 <button
                   onClick={registerForEvent}
-                  className="w-full mt-6 px-6 py-3 bg-[#49475B] text-white font-medium rounded-lg hover:bg-opacity-90 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#49475B]"
+                  className="w-full mt-6 px-6 py-3 bg-[#49475B] text-white font-medium rounded-lg hover:bg-gray-500 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#49475B]"
                 >
                   {event.isFree ? "Register for Free" : "Register Now"}
                 </button>

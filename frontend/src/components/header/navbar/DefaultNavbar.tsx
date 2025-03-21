@@ -11,55 +11,43 @@ import {
   PopoverPanel,
 } from "@headlessui/react";
 import {
-  ArrowPathIcon,
   Bars3Icon,
-  ChartPieIcon,
-  CursorArrowRaysIcon,
-  FingerPrintIcon,
-  SquaresPlusIcon,
+  UserPlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import {
   ChevronDownIcon,
-  PhoneIcon,
-  PlayCircleIcon,
+  UserIcon,
+  ArrowRightEndOnRectangleIcon,
+  TicketIcon,
+  ClipboardDocumentIcon,
+  CalendarIcon,
 } from "@heroicons/react/20/solid";
 
 const actionItems = [
   {
-    name: "Analytics",
-    description: "Get a better understanding of your traffic",
-    href: "#",
-    icon: ChartPieIcon,
+    name: "My Tickets",
+    description: "Your All-Access Pass to New Experiences",
+    href: "/ticket",
+    icon: TicketIcon,
   },
   {
-    name: "Engagement",
-    description: "Speak directly to your customers",
-    href: "#",
-    icon: CursorArrowRaysIcon,
-  },
-  {
-    name: "Security",
-    description: "Your customers’ data will be safe and secure",
-    href: "#",
-    icon: FingerPrintIcon,
-  },
-  {
-    name: "Integrations",
-    description: "Connect with third-party tools",
-    href: "#",
-    icon: SquaresPlusIcon,
-  },
-  {
-    name: "Automations",
-    description: "Build strategic funnels that will convert",
-    href: "#",
-    icon: ArrowPathIcon,
+    name: "My Events",
+    description: "Manage, Edit, and Oversee the Events You’ve Created",
+    href: "/myevents",
+    icon: ClipboardDocumentIcon,
   },
 ];
-const callsToAction = [
-  { name: "Watch demo", href: "#", icon: PlayCircleIcon },
-  { name: "Contact sales", href: "#", icon: PhoneIcon },
+
+// callsToAction for no logged in user
+const callsToActionWhenNoUser = [
+  { name: "Sign In", href: "/signin", icon: UserIcon },
+  { name: "Sign up", href: "/signup", icon: UserPlusIcon },
+];
+
+// callsToAction for no logged in user
+const callsToActionWhenUser = [
+  { name: "Sign Out", href: "/signout", icon: ArrowRightEndOnRectangleIcon },
 ];
 
 export default function DefaultNavbar() {
@@ -74,11 +62,7 @@ export default function DefaultNavbar() {
         <div className="flex lg:flex-1">
           <a href="#" className="-m-1.5 p-1.5">
             <span className="sr-only">SEES</span>
-            <img
-              alt=""
-              src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-              className="h-8 w-auto"
-            />
+            <CalendarIcon className="h-8 w-auto text-gray-800" />{" "}
           </a>
         </div>
         <div className="flex lg:hidden">
@@ -92,9 +76,17 @@ export default function DefaultNavbar() {
           </button>
         </div>
         <PopoverGroup className="hidden lg:flex lg:gap-x-12">
+          <a href="/events" className="text-sm/6 font-semibold text-gray-900">
+            Browse Events
+          </a>
+          <a href="#" className="text-sm/6 font-semibold text-gray-900">
+            Create Events
+          </a>
+        </PopoverGroup>
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <Popover className="relative">
             <PopoverButton className="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
-              Product
+              Account
               <ChevronDownIcon
                 aria-hidden="true"
                 className="size-5 flex-none text-gray-400"
@@ -103,7 +95,7 @@ export default function DefaultNavbar() {
 
             <PopoverPanel
               transition
-              className="absolute top-full -left-8 z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white ring-1 shadow-lg ring-gray-900/5 transition data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
+              className="absolute top-full -left-45 z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white ring-1 shadow-lg ring-gray-900/5 transition data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
             >
               <div className="p-4">
                 {actionItems.map((item) => (
@@ -131,7 +123,7 @@ export default function DefaultNavbar() {
                 ))}
               </div>
               <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
-                {callsToAction.map((item) => (
+                {callsToActionWhenNoUser.map((item) => (
                   <a
                     key={item.name}
                     href={item.href}
@@ -147,21 +139,6 @@ export default function DefaultNavbar() {
               </div>
             </PopoverPanel>
           </Popover>
-
-          <a href="/events" className="text-sm/6 font-semibold text-gray-900">
-            Browse Events
-          </a>
-          <a href="#" className="text-sm/6 font-semibold text-gray-900">
-            Create Events
-          </a>
-          <a href="#" className="text-sm/6 font-semibold text-gray-900">
-            Find My Tickets
-          </a>
-        </PopoverGroup>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <a href="/signin" className="text-sm/6 font-semibold text-gray-900">
-            Sign in <span aria-hidden="true">&rarr;</span>
-          </a>
         </div>
       </nav>
       <Dialog
@@ -194,23 +171,25 @@ export default function DefaultNavbar() {
               <div className="space-y-2 py-6">
                 <Disclosure as="div" className="-mx-3">
                   <DisclosureButton className="group flex w-full items-center justify-between rounded-lg py-2 pr-3.5 pl-3 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
-                    Product
+                    Account
                     <ChevronDownIcon
                       aria-hidden="true"
                       className="size-5 flex-none group-data-open:rotate-180"
                     />
                   </DisclosureButton>
                   <DisclosurePanel className="mt-2 space-y-2">
-                    {[...actionItems, ...callsToAction].map((item) => (
-                      <DisclosureButton
-                        key={item.name}
-                        as="a"
-                        href={item.href}
-                        className="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50"
-                      >
-                        {item.name}
-                      </DisclosureButton>
-                    ))}
+                    {[...actionItems, ...callsToActionWhenNoUser].map(
+                      (item) => (
+                        <DisclosureButton
+                          key={item.name}
+                          as="a"
+                          href={item.href}
+                          className="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50"
+                        >
+                          {item.name}
+                        </DisclosureButton>
+                      )
+                    )}
                   </DisclosurePanel>
                 </Disclosure>
                 <a
@@ -224,20 +203,6 @@ export default function DefaultNavbar() {
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
                   Create Events
-                </a>
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Find My Tickets
-                </a>
-              </div>
-              <div className="py-6">
-                <a
-                  href="/signin"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Sign in
                 </a>
               </div>
             </div>
