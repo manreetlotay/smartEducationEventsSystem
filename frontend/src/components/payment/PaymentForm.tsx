@@ -82,27 +82,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
-
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              value={formData.email}
-              onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
-            />
-            <p className="mt-1 text-sm text-gray-500">
-              We'll send your confirmation to this email.
-            </p>
-          </div>
         </div>
       )}
 
