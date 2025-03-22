@@ -69,7 +69,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
               htmlFor="serialNumber"
               className="block text-sm font-medium text-gray-700"
             >
-              Redemption Code / Serial Number
+              Golden Access Pass Code
             </label>
             <input
               type="text"
@@ -78,7 +78,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
               required
               value={formData.serialNumber}
               onChange={handleChange}
-              placeholder="Enter redemption code (e.g., XYZ-123456-ABC)"
+              placeholder="Enter access code (e.g., XYZ-123456-ABC)"
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>

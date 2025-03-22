@@ -1,47 +1,58 @@
-export interface EventPreview {
-  title: string;
-  startDateTime: string; // ISO 8601 format
-  endDateTime: string; // ISO 8601 format
-  format: eventFormat;
-  imageSrc: string;
-}
+import { User } from "./User";
 
-export enum eventFormat {
+// export interface EventPreview {
+//   title: string;
+//   startDateTime: string; // ISO 8601 format
+//   endDateTime: string; // ISO 8601 format
+//   format: EVENT_FORMAT;
+//   imageSrc: string;
+// }
+
+export enum EVENT_FORMAT {
   ONLINE = "online",
   PERSON = "in-person",
   HYBRID = "hybrid",
 }
 
+// export interface Event {
+//   id: string;
+//   title: string;
+//   description: string;
+//   date: Date;
+//   isFree: boolean;
+//   tags: string[];
+//   location: string;
+//   imageUrl: string;
+// }
+
 export interface Event {
   id: string;
-  title: string;
+  name: string;
   description: string;
-  date: Date;
+  format: EVENT_FORMAT;
+  tags: string[];
+  bannerImage: string;
+  startDate: Date;
+  endDate: Date;
+  capacity: number;
+  registrationDeadline?: Date;
+  address?: string;
+  virtualPlatformLink?: string;
   isFree: boolean;
-  tags: string[];
-  location: string;
-  imageUrl: string;
-}
+  price?: number;
+  agenda: String; // Who speaks and the order + time they speak in
 
-export interface Eventt extends Agenda {
-  eventId: string;
-  imageSrc: string;
-  location?: string;
-  virtualMeetingUrl?: string;
-  fee: "paid";
-  speakers: string;
-  tags: string[];
-  organizedBy: string;
-  sponsoredBy: string;
-  price: string;
-}
+  //Have them here for simplicity, but also have them in UserEvent table
+  organizers: User[];
+  sponsors: User[];
+  speakers: User[];
+  attendees: User[];
+  stakeholders: User[];
 
-export interface Agenda {
-  title: string;
-  startDateTime: string; // ISO 8601 format
-  endDateTime: string; // ISO 8601 format
-  description: string;
-  type: string;
+  // resources: Resource[];
+  // marketing: MarketingCampaign[];
+  // analytics: Analytics;
+  eventAdmin: User;
 }
 
 export interface EventDet {
