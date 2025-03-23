@@ -1,11 +1,4 @@
 import bg from "../../assets/images/homeBg.jpg";
-
-// const actionItems = [
-//   { name: "Explore Upcoming Events", href: "#" },
-//   { name: "Create and Manage Your Event", href: "#" },
-//   { name: "Become a Sponsor", href: "#" },
-//   { name: "Join as a Speaker", href: "#" },
-// ];
 const stats = [
   { name: "Events hosted", value: "1,200+ " },
   { name: "Attendees engaged", value: "500,000+" },
@@ -58,13 +51,6 @@ export default function Landing() {
           </p>
         </div>
         <div className="mx-auto mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
-          {/* <div className="grid grid-cols-1 gap-x-8 gap-y-6 text-base/7 font-semibold text-white sm:grid-cols-2 md:flex lg:gap-x-10">
-            {actionItems.map((link) => (
-              <a key={link.name} href={link.href}>
-                {link.name} <span aria-hidden="true">&rarr;</span>
-              </a>
-            ))}
-          </div> */}
           <dl className="mt-16 grid grid-cols-1 gap-8 sm:mt-20 sm:grid-cols-2 lg:grid-cols-4">
             {stats.map((stat) => (
               <div key={stat.name} className="flex flex-col-reverse gap-1">

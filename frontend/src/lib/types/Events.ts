@@ -1,29 +1,10 @@
 import { User } from "./User";
 
-// export interface EventPreview {
-//   title: string;
-//   startDateTime: string; // ISO 8601 format
-//   endDateTime: string; // ISO 8601 format
-//   format: EVENT_FORMAT;
-//   imageSrc: string;
-// }
-
 export enum EVENT_FORMAT {
   ONLINE = "online",
   PERSON = "in-person",
   HYBRID = "hybrid",
 }
-
-// export interface Event {
-//   id: string;
-//   title: string;
-//   description: string;
-//   date: Date;
-//   isFree: boolean;
-//   tags: string[];
-//   location: string;
-//   imageUrl: string;
-// }
 
 export interface Event {
   id: string;
@@ -53,21 +34,4 @@ export interface Event {
   // marketing: MarketingCampaign[];
   // analytics: Analytics;
   eventAdmin: User;
-}
-
-export interface EventDet {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  endDate: string;
-  isFree: Boolean;
-  price: number;
-  tags: string[];
-  location: string;
-  address: string;
-  organizer: string;
-  imageUrl: string;
-  attendees: number;
-  capacity: number;
 }
