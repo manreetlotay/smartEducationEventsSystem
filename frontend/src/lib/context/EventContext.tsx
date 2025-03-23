@@ -18,7 +18,7 @@ const mockEvents: Event[] = [
     format: EVENT_FORMAT.HYBRID,
     tags: ["Technology", "Innovation", "Networking"],
     bannerImage:
-      "https://tailwindui.com/plus-assets/img/ecommerce-images/product-page-01-related-product-01.jpg",
+      "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1567&q=80",
     startDate: new Date("2025-04-15T09:00:00"),
     endDate: new Date("2025-04-17T17:00:00"),
     capacity: 500,
@@ -28,7 +28,7 @@ const mockEvents: Event[] = [
     isFree: true,
     price: 0,
     agenda:
-      "Day 1: Opening Keynote (9:00 AM - 10:30 AM), Workshop Sessions (11:00 AM - 5:00 PM)\nDay 2: Industry Panel (9:00 AM - 11:00 AM), Tech Demos (1:00 PM - 5:00 PM)\nDay 3: Networking Event (9:00 AM - 12:00 PM), Closing Remarks (3:00 PM - 4:30 PM)",
+      "Day 1: Opening Keynote (9:00 AM - 10:30 AM), Workshop Sessions (11:00 AM - 5:00 PM)\n\nDay 2: Industry Panel (9:00 AM - 11:00 AM), Tech Demos (1:00 PM - 5:00 PM)\n\nDay 3: Networking Event (9:00 AM - 12:00 PM), Closing Remarks (3:00 PM - 4:30 PM)",
     organizers: [
       {
         id: "org1",
@@ -109,7 +109,7 @@ const mockEvents: Event[] = [
     isFree: false,
     price: 49.99,
     agenda:
-      "10:00 AM - 11:30 AM: SEO Fundamentals\n12:00 PM - 1:30 PM: Social Media Strategy\n2:00 PM - 3:30 PM: Content Marketing\n3:30 PM - 4:00 PM: Q&A Session",
+      "10:00 AM - 11:30 AM: SEO Fundamentals\n\n12:00 PM - 1:30 PM: Social Media Strategy\n\n2:00 PM - 3:30 PM: Content Marketing\n\n3:30 PM - 4:00 PM: Q&A Session",
     organizers: [
       {
         id: "org2",
@@ -175,7 +175,7 @@ const mockEvents: Event[] = [
     isFree: true,
     price: 0,
     agenda:
-      "6:00 PM - 6:30 PM: Check-in and refreshments\n6:30 PM - 7:30 PM: Structured networking\n7:30 PM - 8:00 PM: Open networking",
+      "6:00 PM - 6:30 PM: Check-in and refreshments\n\n6:30 PM - 7:30 PM: Structured networking\n\n7:30 PM - 8:00 PM: Open networking",
     organizers: [
       {
         id: "org3",

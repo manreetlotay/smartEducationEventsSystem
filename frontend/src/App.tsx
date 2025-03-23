@@ -1,15 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
-import Landing from "./components/header/Landing";
-import PageNotFound from "./components/status/PageNotFound";
-import EventGallery from "./components/events/eventDashboard/EventGallery";
-import DefaultNavbar from "./components/header/navbar/DefaultNavbar";
 import Footer from "./components/footer/Footer";
-import FilterEvents from "./components/events/eventDashboard/FilterEvents";
-import EventsPage from "./components/events/EventsPage";
-import EventDetail from "./components/events/EventDetail";
 import { EventProvider } from "./lib/context/EventContext";
+import Home from "./views/Home";
+import BrowseEvents from "./views/BrowseEvents";
+import EventDet from "./views/EventDet";
 
 function App() {
   return (
@@ -19,40 +15,10 @@ function App() {
           <Routes>
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/" element={<Landing />} />
-            <Route path="/error" element={<PageNotFound />} />
-            {/* <Route path="/gallery" element={<EventGallery />} /> */}
-            <Route
-              path="/nav"
-              element={
-                <>
-                  <DefaultNavbar />
-                  <Landing />
-                  <Footer />
-                </>
-              }
-            />
-
+            <Route path="/" element={<Home />} />
             <Route path="/footer" element={<Footer />} />
-            {/* <Route path="/try" element={<FilterEvents />} /> */}
-            <Route
-              path="/events"
-              element={
-                <>
-                  <DefaultNavbar />
-                  <EventsPage />
-                </>
-              }
-            />
-            <Route
-              path="/det/:id"
-              element={
-                <>
-                  <DefaultNavbar />
-                  <EventDetail />
-                </>
-              }
-            />
+            <Route path="/events" element={<BrowseEvents />} />
+            <Route path="/det/:id" element={<EventDet />} />
           </Routes>
         </Router>
       </EventProvider>

@@ -25,6 +25,15 @@ const EventsPage: React.FC = () => {
     }
   }, [events, contextLoading]);
 
+  // Helper function to check if two dates are the same day
+  const isSameDay = (date1: Date, date2: Date): boolean => {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  };
+
   // Filter function
   const filterEvents = (filters: FilterState) => {
     return events.filter((event) => {
@@ -45,10 +54,14 @@ const EventsPage: React.FC = () => {
         filters.selectedTags.length === 0 ||
         filters.selectedTags.some((tag) => event.tags.includes(tag));
 
-      // Date filter
+      // Date filter - check if event is happening on the selected date
       const matchesDate =
         !filters.selectedDate ||
-        event.startDate.toDateString() === filters.selectedDate.toDateString();
+        isSameDay(event.startDate, filters.selectedDate) ||
+        (event.endDate &&
+          filters.selectedDate &&
+          event.startDate <= filters.selectedDate &&
+          event.endDate >= filters.selectedDate);
 
       return matchesSearch && matchesFree && matchesTags && matchesDate;
     });

@@ -881,7 +881,7 @@ const EventDetail: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 pb-16 relative z-10">
+    <div className="max-w-6xl mx-auto mt-30 px-4 pb-16 relative z-10">
       {/* Banner Image */}
       {event.bannerImage && (
         <div className="w-full h-64 md:h-80 overflow-hidden rounded-t-lg mb-6">

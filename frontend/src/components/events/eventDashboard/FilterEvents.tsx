@@ -1,9 +1,5 @@
-import React, { useState } from "react";
-
-interface FilterComponentProps {
-  allTags: string[];
-  onFilterChange: (filters: FilterState) => void;
-}
+import React, { useState, useEffect } from "react";
+import { EVENT_FORMAT } from "../../../lib/types/Events";
 
 export interface FilterState {
   searchQuery: string;
@@ -11,6 +7,11 @@ export interface FilterState {
   selectedTags: string[];
   selectedDate: Date | null;
   location: string;
+}
+
+interface FilterComponentProps {
+  allTags: string[];
+  onFilterChange: (filters: FilterState) => void;
 }
 
 const FilterEvents: React.FC<FilterComponentProps> = ({
@@ -37,6 +38,13 @@ const FilterEvents: React.FC<FilterComponentProps> = ({
       : [...filters.selectedTags, tag];
 
     handleFilterChange({ selectedTags });
+  };
+
+  // Helper function to format date properly for input
+  const formatDateForInput = (date: Date | null): string => {
+    if (!date) return "";
+    // Format date as YYYY-MM-DD for input field
+    return date.toISOString().split("T")[0];
   };
 
   return (
@@ -90,18 +98,42 @@ const FilterEvents: React.FC<FilterComponentProps> = ({
           </div>
 
           {/* Date Filter */}
-          <div>
+          <div className="relative">
             <input
               type="date"
               className="p-2 bg-white border border-gray-600 rounded text-black focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
-              onChange={(e) =>
-                handleFilterChange({
-                  selectedDate: e.target.value
-                    ? new Date(e.target.value)
-                    : null,
-                })
-              }
+              value={formatDateForInput(filters.selectedDate)}
+              onChange={(e) => {
+                const dateValue = e.target.value;
+                if (dateValue) {
+                  // Create date at noon to avoid timezone issues
+                  const selectedDate = new Date(dateValue + "T12:00:00");
+                  handleFilterChange({ selectedDate });
+                } else {
+                  handleFilterChange({ selectedDate: null });
+                }
+              }}
             />
+            {filters.selectedDate && (
+              <button
+                className="absolute right-2 top-2 text-gray-500 hover:text-gray-700"
+                onClick={() => handleFilterChange({ selectedDate: null })}
+                aria-label="Clear date"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
 
