@@ -5,6 +5,7 @@ export interface Ticket {
   eventId: string;
   role: USER_ROLE;
   accessCode?: string; //for virtual event
+  virtualLink?: string;
   qrCode?: string; //for inPerson event
   registrationDate: Date;
   isBonusTicket: Boolean; // free ticket for the bonus feature (redeem points)

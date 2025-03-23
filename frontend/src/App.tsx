@@ -9,50 +9,53 @@ import Footer from "./components/footer/Footer";
 import FilterEvents from "./components/events/eventDashboard/FilterEvents";
 import EventsPage from "./components/events/EventsPage";
 import EventDetail from "./components/events/EventDetail";
+import { EventProvider } from "./lib/context/EventContext";
 
 function App() {
   return (
     <>
-      <Router>
-        <Routes>
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/" element={<Landing />} />
-          <Route path="/error" element={<PageNotFound />} />
-          {/* <Route path="/gallery" element={<EventGallery />} /> */}
-          <Route
-            path="/nav"
-            element={
-              <>
-                <DefaultNavbar />
-                <Landing />
-                <Footer />
-              </>
-            }
-          />
+      <EventProvider>
+        <Router>
+          <Routes>
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/" element={<Landing />} />
+            <Route path="/error" element={<PageNotFound />} />
+            {/* <Route path="/gallery" element={<EventGallery />} /> */}
+            <Route
+              path="/nav"
+              element={
+                <>
+                  <DefaultNavbar />
+                  <Landing />
+                  <Footer />
+                </>
+              }
+            />
 
-          <Route path="/footer" element={<Footer />} />
-          {/* <Route path="/try" element={<FilterEvents />} /> */}
-          <Route
-            path="/events"
-            element={
-              <>
-                <DefaultNavbar />
-                <EventsPage />
-              </>
-            }
-          />
-          <Route
-            path="/det/:id"
-            element={
-              <>
-                <DefaultNavbar />
-                <EventDetail />
-              </>
-            }
-          />
-        </Routes>
-      </Router>
+            <Route path="/footer" element={<Footer />} />
+            {/* <Route path="/try" element={<FilterEvents />} /> */}
+            <Route
+              path="/events"
+              element={
+                <>
+                  <DefaultNavbar />
+                  <EventsPage />
+                </>
+              }
+            />
+            <Route
+              path="/det/:id"
+              element={
+                <>
+                  <DefaultNavbar />
+                  <EventDetail />
+                </>
+              }
+            />
+          </Routes>
+        </Router>
+      </EventProvider>
     </>
   );
 }
