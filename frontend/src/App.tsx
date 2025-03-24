@@ -6,6 +6,7 @@ import { EventProvider } from "./lib/context/EventContext";
 import Home from "./views/Home";
 import BrowseEvents from "./views/BrowseEvents";
 import EventDet from "./views/EventDet";
+import MyCreatedEvents from "./views/MyCreatedEvents";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/footer" element={<Footer />} />
             <Route path="/events" element={<BrowseEvents />} />
             <Route path="/det/:id" element={<EventDet />} />
+            <Route path="/myevents" element={<MyCreatedEvents />} />
           </Routes>
         </Router>
       </EventProvider>

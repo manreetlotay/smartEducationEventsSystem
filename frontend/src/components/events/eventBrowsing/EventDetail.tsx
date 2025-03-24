@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { Event, EVENT_FORMAT } from "../../lib/types/Events";
-import { User, USER_TYPE } from "../../lib/types/User";
-import PageNotFound from "../status/PageNotFound";
-import PaymentPage from "../payment/PaymentPage";
-import { useEventContext } from "../../lib/context/EventContext";
+import { Event, EVENT_FORMAT } from "../../../lib/types/Events";
+import { User, USER_TYPE } from "../../../lib/types/User";
+import PageNotFound from "../../status/PageNotFound";
+import PaymentPage from "../../payment/PaymentPage";
+import { useEventContext } from "../../../lib/context/EventContext";
 
 const EventDetail: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();

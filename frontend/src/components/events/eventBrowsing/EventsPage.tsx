@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import FilterEvents, { FilterState } from "./eventDashboard/FilterEvents";
-import EventsGallery from "./eventDashboard/EventGallery";
-import { Event } from "../../lib/types/Events";
-import { useEventContext } from "../../lib/context/EventContext";
+import FilterEvents, { FilterState } from "./FilterEvents";
+import EventsGallery from "./EventGallery";
+import { Event } from "../../../lib/types/Events";
+import { useEventContext } from "../../../lib/context/EventContext";
 
 const EventsPage: React.FC = () => {
   const {
@@ -99,7 +99,9 @@ const EventsPage: React.FC = () => {
       <FilterEvents allTags={allTags} onFilterChange={handleFilterChange} />
 
       <div className="flex justify-between items-center mb-6 mt-10">
-        <h2 className="text-xl font-semibold text-gray-800">Event Listings</h2>
+        <h2 className="text-xl font-semibold text-gray-800">
+          Unlock Knowledge Near You
+        </h2>
         <p className="text-gray-600">
           Showing {filteredEvents.length}{" "}
           {filteredEvents.length === 1 ? "event" : "events"}
