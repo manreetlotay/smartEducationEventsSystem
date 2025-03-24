@@ -1,10 +1,10 @@
 import Landing from "../components/header/Landing";
-import DefaultNavbar from "../components/header/navbar/DefaultNavbar";
+import Navbar from "../components/header/navbar/Navbar";
 
 export default function Home() {
   return (
     <>
-      <DefaultNavbar />
+      <Navbar />
       <Landing />
     </>
   );

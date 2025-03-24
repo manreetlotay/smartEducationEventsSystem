@@ -44,7 +44,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({
 
   return (
     <div className="min-h-screen bg-gray-50 mt-25 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+      <div className="max-w-xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
         {!isPaymentComplete ? (
           <>
             <div className="px-6 py-8 bg-[#655967]">

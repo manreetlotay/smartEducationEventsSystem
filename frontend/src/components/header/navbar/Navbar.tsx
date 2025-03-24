@@ -33,7 +33,7 @@ const actionItems = [
   },
   {
     name: "My Events",
-    description: "Manage, Edit, and Oversee the Events You’ve Created",
+    description: "Manage, Edit, and Oversee the Events You've Created",
     href: "/myevents",
     icon: ClipboardDocumentIcon,
   },
@@ -50,8 +50,28 @@ const callsToActionWhenUser = [
   { name: "Sign Out", href: "/signout", icon: ArrowRightEndOnRectangleIcon },
 ];
 
-export default function DefaultNavbar() {
+export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // This will be fetched from the database later
+  const [userPoints, setUserPoints] = useState(750);
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // Temporary state for demo
+
+  // Custom coin SVG icon for the points display
+  const CoinIcon = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      className="w-5 h-5 text-yellow-600"
+      fill="currentColor"
+    >
+      <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" />
+      <path d="M12 6c-3.309 0-6 2.691-6 6s2.691 6 6 6 6-2.691 6-6-2.691-6-6-6zm0 10c-2.206 0-4-1.794-4-4s1.794-4 4-4 4 1.794 4 4-1.794 4-4 4z" />
+      <path
+        d="M12 8c-2.206 0-4 1.794-4 4s1.794 4 4 4 4-1.794 4-4-1.794-4-4-4z"
+        fill="#FFD700"
+      />
+    </svg>
+  );
 
   return (
     <header className="bg-white fixed top-0 left-0 w-full z-50 shadow-md">
@@ -83,7 +103,17 @@ export default function DefaultNavbar() {
             Create Events
           </a>
         </PopoverGroup>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:items-center">
+          {/* Points display */}
+          {isLoggedIn && (
+            <div className="flex items-center mr-6 px-3 py-1.5 rounded-full h-8">
+              <CoinIcon />
+              <span className="ml-1.5 text-sm font-semibold text-gray-700">
+                {userPoints} points
+              </span>
+            </div>
+          )}
+
           <Popover className="relative">
             <PopoverButton className="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
               Account
@@ -97,6 +127,29 @@ export default function DefaultNavbar() {
               transition
               className="absolute top-full -left-45 z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white ring-1 shadow-lg ring-gray-900/5 transition data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
             >
+              {isLoggedIn && (
+                <div className="p-4 bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-gray-100">
+                  <div className="flex items-center">
+                    <div className="flex items-center justify-center bg-white p-2 rounded-full shadow-sm">
+                      <CoinIcon />
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-gray-700">
+                        Create Events. Unlock the Golden Access Pass!
+                      </p>
+                      <p className="text-xl font-bold text-gray-900">
+                        {userPoints}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="ml-12 mt-2 text-xs text-gray-500">
+                    Each event you create earns you points. Hit 500 and the
+                    Golden Access Pass is yours—free entry to any paid event, on
+                    us!
+                  </p>
+                </div>
+              )}
+
               <div className="p-4">
                 {actionItems.map((item) => (
                   <div
@@ -123,19 +176,33 @@ export default function DefaultNavbar() {
                 ))}
               </div>
               <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
-                {callsToActionWhenNoUser.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className="flex items-center justify-center gap-x-2.5 p-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-100"
-                  >
-                    <item.icon
-                      aria-hidden="true"
-                      className="size-5 flex-none text-gray-400"
-                    />
-                    {item.name}
-                  </a>
-                ))}
+                {isLoggedIn
+                  ? callsToActionWhenUser.map((item) => (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        className="flex items-center justify-center gap-x-2.5 p-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-100"
+                      >
+                        <item.icon
+                          aria-hidden="true"
+                          className="size-5 flex-none text-gray-400"
+                        />
+                        {item.name}
+                      </a>
+                    ))
+                  : callsToActionWhenNoUser.map((item) => (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        className="flex items-center justify-center gap-x-2.5 p-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-100"
+                      >
+                        <item.icon
+                          aria-hidden="true"
+                          className="size-5 flex-none text-gray-400"
+                        />
+                        {item.name}
+                      </a>
+                    ))}
               </div>
             </PopoverPanel>
           </Popover>
@@ -167,8 +234,16 @@ export default function DefaultNavbar() {
             </button>
           </div>
           <div className="mt-6 flow-root">
-            <div className="-my-6 divide-y divide-gray-500/10">
-              <div className="space-y-2 py-6">
+            <div className=" divide-y divide-gray-500/10">
+              {isLoggedIn && (
+                <div className="py-3 px-3 rounded-lg mt-5 flex items-center">
+                  <CoinIcon />
+                  <span className="ml-2 text-sm font-semibold text-gray-700">
+                    {userPoints} points
+                  </span>
+                </div>
+              )}
+              <div className="space-y-2">
                 <Disclosure as="div" className="-mx-3">
                   <DisclosureButton className="group flex w-full items-center justify-between rounded-lg py-2 pr-3.5 pl-3 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
                     Account
@@ -178,18 +253,21 @@ export default function DefaultNavbar() {
                     />
                   </DisclosureButton>
                   <DisclosurePanel className="mt-2 space-y-2">
-                    {[...actionItems, ...callsToActionWhenNoUser].map(
-                      (item) => (
-                        <DisclosureButton
-                          key={item.name}
-                          as="a"
-                          href={item.href}
-                          className="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50"
-                        >
-                          {item.name}
-                        </DisclosureButton>
-                      )
-                    )}
+                    {[
+                      ...actionItems,
+                      ...(isLoggedIn
+                        ? callsToActionWhenUser
+                        : callsToActionWhenNoUser),
+                    ].map((item) => (
+                      <DisclosureButton
+                        key={item.name}
+                        as="a"
+                        href={item.href}
+                        className="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50"
+                      >
+                        {item.name}
+                      </DisclosureButton>
+                    ))}
                   </DisclosurePanel>
                 </Disclosure>
                 <a

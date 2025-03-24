@@ -1,10 +1,10 @@
-import DefaultNavbar from "../components/header/navbar/DefaultNavbar";
+import Navbar from "../components/header/navbar/Navbar";
 import EventsPage from "../components/events/EventsPage";
 
 export default function BrowseEvents() {
   return (
     <>
-      <DefaultNavbar />
+      <Navbar />
       <EventsPage />
     </>
   );
