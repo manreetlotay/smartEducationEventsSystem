@@ -99,7 +99,10 @@ export default function Navbar() {
           <a href="/events" className="text-sm/6 font-semibold text-gray-900">
             Browse Events
           </a>
-          <a href="#" className="text-sm/6 font-semibold text-gray-900">
+          <a
+            href="createevent"
+            className="text-sm/6 font-semibold text-gray-900"
+          >
             Create Events
           </a>
         </PopoverGroup>

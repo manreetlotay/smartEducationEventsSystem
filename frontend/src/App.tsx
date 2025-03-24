@@ -7,6 +7,7 @@ import Home from "./views/Home";
 import BrowseEvents from "./views/BrowseEvents";
 import EventDet from "./views/EventDet";
 import MyCreatedEvents from "./views/MyCreatedEvents";
+import CreateEventPage from "./views/CreateEventPage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/events" element={<BrowseEvents />} />
             <Route path="/det/:id" element={<EventDet />} />
             <Route path="/myevents" element={<MyCreatedEvents />} />
+            <Route path="/createevent" element={<CreateEventPage />} />
           </Routes>
         </Router>
       </EventProvider>

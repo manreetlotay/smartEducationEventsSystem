@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Event } from "../../../lib/types/Events";
 import EventCard from "../eventBrowsing/EventCard";
 import { useEventContext } from "../../../lib/context/EventContext";
@@ -35,7 +35,7 @@ const MyEventsPage: React.FC = () => {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-gray-900">My Events</h1>
         <button
-          onClick={() => navigate("/create-event")}
+          onClick={() => navigate("/createevent")}
           className="px-4 py-2 bg-[#655967] text-white rounded-md hover:bg-gray-600 transition-colors"
         >
           Create New Event
