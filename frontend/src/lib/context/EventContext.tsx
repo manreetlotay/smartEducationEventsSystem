@@ -35,7 +35,8 @@ const mockEvents: Event[] = [
         email: "techorg@example.com",
         password: "",
         phoneNumber: "415-555-1234",
-        profileImage: "/images/tech-organization.jpg",
+        profileImage:
+          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
         userType: USER_TYPE.ORGANIZATION,
         points: 0,
         firstName: "",
@@ -50,7 +51,8 @@ const mockEvents: Event[] = [
         email: "sponsor@example.com",
         password: "",
         phoneNumber: "415-555-9876",
-        profileImage: "/images/sponsor-logo.jpg",
+        profileImage:
+          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
         userType: USER_TYPE.ORGANIZATION,
         points: 0,
         firstName: "",
@@ -65,7 +67,8 @@ const mockEvents: Event[] = [
         email: "jane.doe@example.com",
         password: "",
         phoneNumber: "415-555-5678",
-        profileImage: "/images/jane-doe.jpg",
+        profileImage:
+          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
         userType: USER_TYPE.INDIVIDUAL,
         profession: "AI Researcher",
         points: 0,
@@ -83,7 +86,8 @@ const mockEvents: Event[] = [
       email: "admin@example.com",
       password: "",
       phoneNumber: "415-555-2345",
-      profileImage: "/images/admin.jpg",
+      profileImage:
+        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
       userType: USER_TYPE.INDIVIDUAL,
       points: 0,
       firstName: "Admin",
@@ -116,7 +120,8 @@ const mockEvents: Event[] = [
         email: "digitalmarketing@example.com",
         password: "",
         phoneNumber: "415-555-6789",
-        profileImage: "/images/digital-marketing.jpg",
+        profileImage:
+          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
         userType: USER_TYPE.ORGANIZATION,
         points: 0,
         firstName: "",
@@ -132,7 +137,8 @@ const mockEvents: Event[] = [
         email: "sarah.johnson@example.com",
         password: "",
         phoneNumber: "415-555-8765",
-        profileImage: "/images/sarah-johnson.jpg",
+        profileImage:
+          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
         userType: USER_TYPE.INDIVIDUAL,
         profession: "Marketing Director",
         points: 0,
@@ -150,7 +156,8 @@ const mockEvents: Event[] = [
       email: "marketing.admin@example.com",
       password: "",
       phoneNumber: "415-555-7890",
-      profileImage: "/images/admin2.jpg",
+      profileImage:
+        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
       userType: USER_TYPE.INDIVIDUAL,
       points: 0,
       firstName: "Marketing",
