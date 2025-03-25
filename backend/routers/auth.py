@@ -6,8 +6,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from main import SessionDep
-from models.auth.auth import ACCESS_TOKEN_EXPIRE_MINUTES, \
+from db_session import SessionDep
+from auth.auth import ACCESS_TOKEN_EXPIRE_MINUTES, \
     Token, authenticate_user, create_access_token
 
 router = APIRouter(prefix="/token", tags=["Authentication"])

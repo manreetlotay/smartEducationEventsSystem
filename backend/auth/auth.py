@@ -9,7 +9,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 from pydantic import BaseModel
 
-from main import SessionDep
+from db_session import SessionDep
 
 # to get a string like this run:
 # openssl rand -hex 32
