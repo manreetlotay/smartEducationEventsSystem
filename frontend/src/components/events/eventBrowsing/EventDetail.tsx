@@ -4,6 +4,7 @@ import { Event, EVENT_FORMAT } from "../../../lib/types/Events";
 import { User, USER_TYPE } from "../../../lib/types/User";
 import PageNotFound from "../../status/PageNotFound";
 import PaymentPage from "../../payment/PaymentPage";
+import PaymentSuccess from "../../payment/PaymentSuccess";
 import { useEventContext } from "../../../lib/context/EventContext";
 import { PencilIcon } from "@heroicons/react/20/solid";
 
@@ -17,6 +18,7 @@ const EventDetail: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState("");
   const [showPaymentPage, setShowPaymentPage] = useState(false);
+  const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
 
   // Check if current user is the admin of this event (admin1 is replaced with id of current logged in user)
   const isEventAdmin = event && event.eventAdmin.id === "admin1";
@@ -86,6 +88,7 @@ const EventDetail: React.FC = () => {
     if (event.isFree) {
       // Handle free registration logic
       console.log("Processing free registration");
+      setShowPaymentSuccess(true);
       // Perhaps redirect to a confirmation page
       // navigate(`/events/${eventId}/registered`);
     } else {
@@ -595,7 +598,16 @@ const EventDetail: React.FC = () => {
                     ? "Register for Free"
                     : `Register Now • $${event.price}`}
                 </button>
-
+                
+                {/* Render PaymentSuccess for free events */}
+                {event.isFree && showPaymentSuccess && (
+                  <PaymentSuccess
+                    eventName={event.name}
+                    isVisible={showPaymentSuccess}
+                    onClose={() => setShowPaymentSuccess(false)}
+                  />
+                )}
+                
                 {isNearlyFull && (
                   <p className="text-center text-sm text-red-500 dark:text-red-400 mt-2">
                     Almost sold out! Register soon.

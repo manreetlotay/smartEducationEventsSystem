@@ -26,15 +26,29 @@ const PaymentSuccess: React.FC<PaymentSuccessProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    if (isVisible) {
+      // Disable background scrolling when the modal is visible
+      document.body.style.overflow = "hidden";
+    } else {
+      // Re-enable scrolling when the modal is not visible
+      document.body.style.overflow = "auto";
+    }
+    // Cleanup: make sure scrolling is enabled if the component unmounts
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isVisible]);
+
   if (!isVisible) return null;
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Backdrop
       <div
         className="fixed inset-0 bg-black bg-opacity-50 z-40"
         onClick={onClose}
-      ></div>
+      ></div> */}
 
       {/* Modal */}
       <div className="fixed inset-0 flex items-center justify-center z-50">
