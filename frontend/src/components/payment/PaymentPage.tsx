@@ -1,5 +1,5 @@
 // PaymentPage.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PaymentForm from "./PaymentForm";
 import PaymentSuccess from "./PaymentSuccess";
 import PaymentMethods from "./PaymentMethods";
@@ -16,6 +16,10 @@ const PaymentPage: React.FC<PaymentPageProps> = ({
   eventPrice,
   onCancel,
 }) => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   const [paymentMethod, setPaymentMethod] = useState<string>("credit-card");
   const [isPaymentComplete, setIsPaymentComplete] = useState<boolean>(false);
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
