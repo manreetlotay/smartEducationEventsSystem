@@ -5,6 +5,7 @@ import { User, USER_TYPE } from "../../../lib/types/User";
 import PageNotFound from "../../status/PageNotFound";
 import PaymentPage from "../../payment/PaymentPage";
 import { useEventContext } from "../../../lib/context/EventContext";
+import { PencilIcon } from "@heroicons/react/20/solid";
 
 const EventDetail: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -16,6 +17,14 @@ const EventDetail: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState("");
   const [showPaymentPage, setShowPaymentPage] = useState(false);
+
+  // Check if current user is the admin of this event (admin1 is replaced with id of current logged in user)
+  const isEventAdmin = event && event.eventAdmin.id === "admin1";
+
+  // Handle edit button click
+  const handleEditClick = () => {
+    if (event != null) navigate(`/createevent/${event.id}`);
+  };
 
   // Fetch event details based on ID
   useEffect(() => {
@@ -201,6 +210,19 @@ const EventDetail: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto mt-30 px-4 pb-16 relative z-10">
+      {/* Admin Action Bar - Only shown to event admins */}
+      {isEventAdmin && (
+        <div className="bg-gray-200 p-4 mb-6 rounded-md flex justify-end items-center">
+          <button
+            onClick={handleEditClick}
+            className="flex items-center px-4 py-2 bg-[#655967] text-white rounded-md hover:bg-gray-700 transition-colors"
+          >
+            <PencilIcon className="h-5 w-5 mr-2" />
+            Edit Event
+          </button>
+        </div>
+      )}
+
       {/* Banner Image */}
       {event.bannerImage && (
         <div className="w-full h-64 md:h-80 overflow-hidden rounded-t-lg mb-6">

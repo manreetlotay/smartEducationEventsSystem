@@ -159,8 +159,6 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
       if (!event.name?.trim()) throw new Error("Event name is required");
       if (!event.description?.trim())
         throw new Error("Event description is required");
-      if (!event.bannerImage?.trim())
-        throw new Error("Banner image URL is required");
       if (!event.agenda?.toString().trim())
         throw new Error("Agenda is required");
       if (event.capacity && event.capacity <= 0)
@@ -548,7 +546,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Banner Image URL *
+                Banner Image URL
               </label>
               <input
                 type="text"
@@ -557,7 +555,6 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
                 onChange={handleEventChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 placeholder="https://example.com/image.jpg"
-                required
               />
               {event.bannerImage && (
                 <div className="mt-2">
@@ -612,13 +609,13 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
               {event.tags?.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#655967] text-blue-800"
+                  className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-800"
                 >
                   {tag}
                   <button
                     type="button"
                     onClick={() => removeTag(tag)}
-                    className="ml-1.5 inline-flex items-center justify-center h-4 w-4 rounded-full bg-[#655967] text-blue-800 hover:bg-gray-300"
+                    className="ml-1.5 inline-flex items-center justify-center h-4 w-4 rounded-full bg-gray-300 text-gray-900 hover:bg-gray-300"
                   >
                     <span className="sr-only">Remove {tag} tag</span>
                     <svg

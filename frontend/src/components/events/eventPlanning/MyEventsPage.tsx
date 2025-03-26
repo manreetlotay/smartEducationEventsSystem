@@ -58,7 +58,11 @@ const MyEventsPage: React.FC = () => {
             {myEvents.map((event) => (
               <div
                 key={event.id}
-                onClick={() => navigate(`/admin-event/${event.id}`)}
+                onClick={() =>
+                  navigate(`/det/${event.id}`, {
+                    state: { event }, // Pass the event object as state to the router
+                  })
+                }
                 className="cursor-pointer transform transition-transform hover:scale-[1.02]"
               >
                 <EventCard event={event} />

@@ -28,7 +28,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
     if (event.format === EVENT_FORMAT.ONLINE) {
       return "Virtual Event";
     } else if (event.format === EVENT_FORMAT.HYBRID) {
-      return event.address ? `${event.address} (Hybrid)` : "Hybrid Event";
+      return event.address ? `${event.address}` : "Hybrid Event";
     } else {
       return event.address || "Location TBA";
     }
