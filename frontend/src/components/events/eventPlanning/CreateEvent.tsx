@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { EVENT_FORMAT, Event } from "../../../lib/types/Events";
 import { useEventContext } from "../../../lib/context/EventContext";
+import Footer from "../../footer/Footer";
 
 interface CreateEventProps {
   mode?: "create" | "edit";
@@ -294,465 +295,468 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto mt-25 p-4 sm:p-6 lg:p-8">
-      <div className="bg-gray-50 shadow rounded-lg p-6">
-        <h1 className="text-2xl font-bold mb-6 text-center">
-          {mode === "create" ? "Create New Event" : "Edit Event"}
-        </h1>
+    <>
+      <div className="max-w-6xl mx-auto mt-25 p-4 sm:p-6 lg:p-8">
+        <div className="bg-gray-50 shadow rounded-lg p-6">
+          <h1 className="text-2xl font-bold mb-6 text-center">
+            {mode === "create" ? "Create New Event" : "Edit Event"}
+          </h1>
 
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700">
-            <p>{error}</p>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          {/* Basic Information Section */}
-          <div className="mb-8 ">
-            <h2 className="text-lg font-medium border-b pb-2 mb-4">
-              Basic Information
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Event Name *
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={event.name}
-                  onChange={handleEventChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Event Format *
-                </label>
-                <select
-                  name="format"
-                  value={event.format}
-                  onChange={handleEventChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  required
-                >
-                  <option value={EVENT_FORMAT.PERSON}>In-Person</option>
-                  <option value={EVENT_FORMAT.ONLINE}>Online</option>
-                  <option value={EVENT_FORMAT.HYBRID}>Hybrid</option>
-                </select>
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Event Description *
-                </label>
-                <textarea
-                  name="description"
-                  value={event.description}
-                  onChange={handleEventChange}
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  required
-                ></textarea>
-              </div>
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700">
+              <p>{error}</p>
             </div>
-          </div>
+          )}
 
-          {/* Date and Time Section */}
-          <div className="mb-8">
-            <h2 className="text-lg font-medium border-b pb-2 mb-4">
-              Date and Time
-            </h2>
+          <form onSubmit={handleSubmit}>
+            {/* Basic Information Section */}
+            <div className="mb-8 ">
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">
+                Basic Information
+              </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Start Date and Time *
-                </label>
-                <input
-                  type="datetime-local"
-                  name="startDate"
-                  value={formatDateForInput(event.startDate)}
-                  onChange={handleDateChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  End Date and Time *
-                </label>
-                <input
-                  type="datetime-local"
-                  name="endDate"
-                  value={formatDateForInput(event.endDate)}
-                  onChange={handleDateChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Registration Deadline (Optional)
-                </label>
-                <input
-                  type="datetime-local"
-                  name="registrationDeadline"
-                  value={formatDateForInput(event.registrationDeadline)}
-                  onChange={handleDateChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Location Section */}
-          <div className="mb-8">
-            <h2 className="text-lg font-medium border-b pb-2 mb-4">Location</h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {(event.format === EVENT_FORMAT.PERSON ||
-                event.format === EVENT_FORMAT.HYBRID) && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Address{" "}
-                    {event.format === EVENT_FORMAT.PERSON ? "*" : "(Optional)"}
+                    Event Name *
                   </label>
                   <input
                     type="text"
-                    name="address"
-                    value={event.address}
+                    name="name"
+                    value={event.name}
                     onChange={handleEventChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    required={event.format === EVENT_FORMAT.PERSON}
+                    required
                   />
                 </div>
-              )}
 
-              {(event.format === EVENT_FORMAT.ONLINE ||
-                event.format === EVENT_FORMAT.HYBRID) && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Virtual Platform Link{" "}
-                    {event.format === EVENT_FORMAT.ONLINE ? "*" : "(Optional)"}
+                    Event Format *
                   </label>
-                  <input
-                    type="url"
-                    name="virtualPlatformLink"
-                    value={event.virtualPlatformLink}
+                  <select
+                    name="format"
+                    value={event.format}
                     onChange={handleEventChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    placeholder="https://..."
-                    required={event.format === EVENT_FORMAT.ONLINE}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Capacity and Price Section */}
-          <div className="mb-8">
-            <h2 className="text-lg font-medium border-b pb-2 mb-4">
-              Capacity and Pricing
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Capacity (Maximum Attendees) *
-                </label>
-                <input
-                  type="number"
-                  name="capacity"
-                  value={event.capacity}
-                  onChange={handleEventChange}
-                  min="1"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-
-              <div>
-                <div className="flex items-center mb-2">
-                  <input
-                    type="checkbox"
-                    id="isFree"
-                    checked={event.isFree}
-                    onChange={handleFreeToggle}
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-                  />
-                  <label
-                    htmlFor="isFree"
-                    className="ml-2 block text-sm text-gray-700"
+                    required
                   >
-                    This is a free event
-                  </label>
+                    <option value={EVENT_FORMAT.PERSON}>In-Person</option>
+                    <option value={EVENT_FORMAT.ONLINE}>Online</option>
+                    <option value={EVENT_FORMAT.HYBRID}>Hybrid</option>
+                  </select>
                 </div>
 
-                {!event.isFree && (
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Event Description *
+                  </label>
+                  <textarea
+                    name="description"
+                    value={event.description}
+                    onChange={handleEventChange}
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    required
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            {/* Date and Time Section */}
+            <div className="mb-8">
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">
+                Date and Time
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Start Date and Time *
+                  </label>
+                  <input
+                    type="datetime-local"
+                    name="startDate"
+                    value={formatDateForInput(event.startDate)}
+                    onChange={handleDateChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    End Date and Time *
+                  </label>
+                  <input
+                    type="datetime-local"
+                    name="endDate"
+                    value={formatDateForInput(event.endDate)}
+                    onChange={handleDateChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Registration Deadline (Optional)
+                  </label>
+                  <input
+                    type="datetime-local"
+                    name="registrationDeadline"
+                    value={formatDateForInput(event.registrationDeadline)}
+                    onChange={handleDateChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Location Section */}
+            <div className="mb-8">
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">Location</h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {(event.format === EVENT_FORMAT.PERSON ||
+                  event.format === EVENT_FORMAT.HYBRID) && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Price ($) *
+                      Address{" "}
+                      {event.format === EVENT_FORMAT.PERSON ? "*" : "(Optional)"}
                     </label>
                     <input
-                      type="number"
-                      name="price"
-                      value={event.price}
+                      type="text"
+                      name="address"
+                      value={event.address}
                       onChange={handleEventChange}
-                      min="0.01"
-                      step="0.01"
                       className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                      required={!event.isFree}
+                      required={event.format === EVENT_FORMAT.PERSON}
+                    />
+                  </div>
+                )}
+
+                {(event.format === EVENT_FORMAT.ONLINE ||
+                  event.format === EVENT_FORMAT.HYBRID) && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Virtual Platform Link{" "}
+                      {event.format === EVENT_FORMAT.ONLINE ? "*" : "(Optional)"}
+                    </label>
+                    <input
+                      type="url"
+                      name="virtualPlatformLink"
+                      value={event.virtualPlatformLink}
+                      onChange={handleEventChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                      placeholder="https://..."
+                      required={event.format === EVENT_FORMAT.ONLINE}
                     />
                   </div>
                 )}
               </div>
             </div>
-          </div>
 
-          {/* Agenda Section */}
-          <div className="mb-8">
-            <h2 className="text-lg font-medium border-b pb-2 mb-4">Agenda</h2>
+            {/* Capacity and Price Section */}
+            <div className="mb-8">
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">
+                Capacity and Pricing
+              </h2>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Event Agenda *
-              </label>
-              <textarea
-                name="agenda"
-                value={event.agenda?.toString()}
-                onChange={handleEventChange}
-                rows={6}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                placeholder="Provide a detailed agenda for your event..."
-                required
-              ></textarea>
-              <p className="mt-1 text-sm text-gray-500">
-                Include speaker schedule, times, and session details.
-              </p>
-            </div>
-          </div>
-
-          {/* Banner Image Section */}
-          <div className="mb-8">
-            <h2 className="text-lg font-medium border-b pb-2 mb-4">
-              Banner Image
-            </h2>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Banner Image URL
-              </label>
-              <input
-                type="text"
-                name="bannerImage"
-                value={event.bannerImage}
-                onChange={handleEventChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                placeholder="https://example.com/image.jpg"
-              />
-              {event.bannerImage && (
-                <div className="mt-2">
-                  <p className="text-sm text-gray-500 mb-1">Preview:</p>
-                  <img
-                    src={event.bannerImage}
-                    alt="Banner Preview"
-                    className="h-40 w-full object-cover rounded-md"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        "https://via.placeholder.com/800x400?text=Invalid+Image+URL";
-                    }}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Capacity (Maximum Attendees) *
+                  </label>
+                  <input
+                    type="number"
+                    name="capacity"
+                    value={event.capacity}
+                    onChange={handleEventChange}
+                    min="1"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    required
                   />
                 </div>
-              )}
-            </div>
-          </div>
 
-          {/* Tags Section */}
-          <div className="mb-8">
-            <h2 className="text-lg font-medium border-b pb-2 mb-4">Tags</h2>
+                <div>
+                  <div className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id="isFree"
+                      checked={event.isFree}
+                      onChange={handleFreeToggle}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                    />
+                    <label
+                      htmlFor="isFree"
+                      className="ml-2 block text-sm text-gray-700"
+                    >
+                      This is a free event
+                    </label>
+                  </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Event Tags *
-              </label>
-              <div className="flex space-x-2">
-                <input
-                  type="text"
-                  value={newTag}
-                  onChange={(e) => setNewTag(e.target.value)}
-                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md"
-                  placeholder="Add a tag and press Enter"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      addTag();
-                    }
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={addTag}
-                  className="px-4 py-2 text-sm font-medium text-white bg-[#655967] border border-transparent rounded-md hover:bg-gray-700"
-                >
-                  Add
-                </button>
+                  {!event.isFree && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Price ($) *
+                      </label>
+                      <input
+                        type="number"
+                        name="price"
+                        value={event.price}
+                        onChange={handleEventChange}
+                        min="0.01"
+                        step="0.01"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                        required={!event.isFree}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              {event.tags?.map((tag) => (
-                <span
-                  key={tag}
-                  className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-800"
-                >
-                  {tag}
+            {/* Agenda Section */}
+            <div className="mb-8">
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">Agenda</h2>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Event Agenda *
+                </label>
+                <textarea
+                  name="agenda"
+                  value={event.agenda?.toString()}
+                  onChange={handleEventChange}
+                  rows={6}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  placeholder="Provide a detailed agenda for your event..."
+                  required
+                ></textarea>
+                <p className="mt-1 text-sm text-gray-500">
+                  Include speaker schedule, times, and session details.
+                </p>
+              </div>
+            </div>
+
+            {/* Banner Image Section */}
+            <div className="mb-8">
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">
+                Banner Image
+              </h2>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Banner Image URL
+                </label>
+                <input
+                  type="text"
+                  name="bannerImage"
+                  value={event.bannerImage}
+                  onChange={handleEventChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  placeholder="https://example.com/image.jpg"
+                />
+                {event.bannerImage && (
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-500 mb-1">Preview:</p>
+                    <img
+                      src={event.bannerImage}
+                      alt="Banner Preview"
+                      className="h-40 w-full object-cover rounded-md"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "https://via.placeholder.com/800x400?text=Invalid+Image+URL";
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Tags Section */}
+            <div className="mb-8">
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">Tags</h2>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Event Tags *
+                </label>
+                <div className="flex space-x-2">
+                  <input
+                    type="text"
+                    value={newTag}
+                    onChange={(e) => setNewTag(e.target.value)}
+                    className="flex-grow px-3 py-2 border border-gray-300 rounded-md"
+                    placeholder="Add a tag and press Enter"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        addTag();
+                      }
+                    }}
+                  />
                   <button
                     type="button"
-                    onClick={() => removeTag(tag)}
-                    className="ml-1.5 inline-flex items-center justify-center h-4 w-4 rounded-full bg-gray-300 text-gray-900 hover:bg-gray-300"
+                    onClick={addTag}
+                    className="px-4 py-2 text-sm font-medium text-white bg-[#655967] border border-transparent rounded-md hover:bg-gray-700"
                   >
-                    <span className="sr-only">Remove {tag} tag</span>
-                    <svg
-                      className="h-2 w-2"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-                    </svg>
+                    Add
                   </button>
-                </span>
-              ))}
-              {event.tags?.length === 0 && (
-                <p className="text-sm text-gray-500">No tags added yet</p>
-              )}
-            </div>
-          </div>
+                </div>
+              </div>
 
-          {/* People Sections */}
-          {/* Event Admin Section */}
-          <div className="mb-8">
-            <h2 className="text-lg font-medium border-b pb-2 mb-4">
-              Event Administrator
-            </h2>
-
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-600">
-                You will be automatically assigned as the Event Administrator.
-                As the admin, you'll be able to edit event details, manage
-                participants, and view analytics.
-              </p>
-            </div>
-          </div>
-
-          {/* Organizers Section */}
-          <div className="mb-8">
-            <h2 className="text-lg font-medium border-b pb-2 mb-4">
-              Organizers
-            </h2>
-            <EmailList
-              label="Organizer"
-              emails={organizerEmails}
-              setEmails={setOrganizerEmails}
-              emailInput={organizerEmailInput}
-              setEmailInput={setOrganizerEmailInput}
-            />
-          </div>
-
-          {/* Speakers Section */}
-          <div className="mb-8">
-            <h2 className="text-lg font-medium border-b pb-2 mb-4">Speakers</h2>
-            <EmailList
-              label="Speaker"
-              emails={speakerEmails}
-              setEmails={setSpeakerEmails}
-              emailInput={speakerEmailInput}
-              setEmailInput={setSpeakerEmailInput}
-            />
-          </div>
-
-          {/* Sponsors Section */}
-          <div className="mb-8">
-            <h2 className="text-lg font-medium border-b pb-2 mb-4">Sponsors</h2>
-            <EmailList
-              label="Sponsor"
-              emails={sponsorEmails}
-              setEmails={setSponsorEmails}
-              emailInput={sponsorEmailInput}
-              setEmailInput={setSponsorEmailInput}
-            />
-          </div>
-
-          {/* Stakeholders Section */}
-          <div className="mb-8">
-            <h2 className="text-lg font-medium border-b pb-2 mb-4">
-              Stakeholders
-            </h2>
-            <EmailList
-              label="Stakeholder"
-              emails={stakeholderEmails}
-              setEmails={setStakeholderEmails}
-              emailInput={stakeholderEmailInput}
-              setEmailInput={setStakeholderEmailInput}
-            />
-          </div>
-
-          {/* Submit Section */}
-          <div className="flex justify-end space-x-4 border-t pt-6">
-            <button
-              type="button"
-              onClick={() => navigate("/myevents")}
-              className="px-6 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className={`px-6 py-3 text-sm font-medium text-white bg-[#655967] border border-transparent rounded-md shadow-sm hover:bg-gray-700 ${
-                isSubmitting ? "opacity-75 cursor-not-allowed" : ""
-              }`}
-            >
-              {isSubmitting ? (
-                <span className="flex items-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
+              <div className="flex flex-wrap gap-2">
+                {event.tags?.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-800"
                   >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  {mode === "create"
-                    ? "Creating Event..."
-                    : "Updating Event..."}
-                </span>
-              ) : mode === "create" ? (
-                "Create Event"
-              ) : (
-                "Update Event"
-              )}
-            </button>
-          </div>
-        </form>
+                    {tag}
+                    <button
+                      type="button"
+                      onClick={() => removeTag(tag)}
+                      className="ml-1.5 inline-flex items-center justify-center h-4 w-4 rounded-full bg-gray-300 text-gray-900 hover:bg-gray-300"
+                    >
+                      <span className="sr-only">Remove {tag} tag</span>
+                      <svg
+                        className="h-2 w-2"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                      </svg>
+                    </button>
+                  </span>
+                ))}
+                {event.tags?.length === 0 && (
+                  <p className="text-sm text-gray-500">No tags added yet</p>
+                )}
+              </div>
+            </div>
+
+            {/* People Sections */}
+            {/* Event Admin Section */}
+            <div className="mb-8">
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">
+                Event Administrator
+              </h2>
+
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <p className="text-sm text-gray-600">
+                  You will be automatically assigned as the Event Administrator.
+                  As the admin, you'll be able to edit event details, manage
+                  participants, and view analytics.
+                </p>
+              </div>
+            </div>
+
+            {/* Organizers Section */}
+            <div className="mb-8">
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">
+                Organizers
+              </h2>
+              <EmailList
+                label="Organizer"
+                emails={organizerEmails}
+                setEmails={setOrganizerEmails}
+                emailInput={organizerEmailInput}
+                setEmailInput={setOrganizerEmailInput}
+              />
+            </div>
+
+            {/* Speakers Section */}
+            <div className="mb-8">
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">Speakers</h2>
+              <EmailList
+                label="Speaker"
+                emails={speakerEmails}
+                setEmails={setSpeakerEmails}
+                emailInput={speakerEmailInput}
+                setEmailInput={setSpeakerEmailInput}
+              />
+            </div>
+
+            {/* Sponsors Section */}
+            <div className="mb-8">
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">Sponsors</h2>
+              <EmailList
+                label="Sponsor"
+                emails={sponsorEmails}
+                setEmails={setSponsorEmails}
+                emailInput={sponsorEmailInput}
+                setEmailInput={setSponsorEmailInput}
+              />
+            </div>
+
+            {/* Stakeholders Section */}
+            <div className="mb-8">
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">
+                Stakeholders
+              </h2>
+              <EmailList
+                label="Stakeholder"
+                emails={stakeholderEmails}
+                setEmails={setStakeholderEmails}
+                emailInput={stakeholderEmailInput}
+                setEmailInput={setStakeholderEmailInput}
+              />
+            </div>
+
+            {/* Submit Section */}
+            <div className="flex justify-end space-x-4 border-t pt-6">
+              <button
+                type="button"
+                onClick={() => navigate("/myevents")}
+                className="px-6 py-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`px-6 py-3 text-sm font-medium text-white bg-[#655967] border border-transparent rounded-md shadow-sm hover:bg-gray-700 ${
+                  isSubmitting ? "opacity-75 cursor-not-allowed" : ""
+                }`}
+              >
+                {isSubmitting ? (
+                  <span className="flex items-center">
+                    <svg
+                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    {mode === "create"
+                      ? "Creating Event..."
+                      : "Updating Event..."}
+                  </span>
+                ) : mode === "create" ? (
+                  "Create Event"
+                ) : (
+                  "Update Event"
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+      <Footer/>
+    </>
   );
 };
 
