@@ -11,10 +11,10 @@ const stats = [
 ];
 
 export default function Landing() {
-  const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
+  const [rating, setRating] = useState<number>(0);
+  const [hoverRating, setHoverRating] = useState<number>(0);
 
-  const renderStar = (starNumber, currentValue) => {
+  const renderStar = (starNumber: number, currentValue: number) => {
     if (currentValue >= starNumber) {
       return <span className="text-3xl text-yellow-400">★</span>;
     } else {
@@ -63,10 +63,11 @@ export default function Landing() {
                 Connecting Minds
               </h2>
               <p className="mt-8 text-lg font-medium text-pretty text-gray-300 sm:text-xl/8">
-                From planning and scheduling to managing participants and speakers,
-                our platform streamlines the entire process, ensuring every event—be
-                it a seminar, workshop, or conference—runs smoothly and efficiently,
-                delivering exceptional value to attendees and organizers alike.
+                From planning and scheduling to managing participants and
+                speakers, our platform streamlines the entire process, ensuring
+                every event—be it a seminar, workshop, or conference—runs
+                smoothly and efficiently, delivering exceptional value to
+                attendees and organizers alike.
               </p>
             </div>
             <div className="mx-auto mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
@@ -95,13 +96,16 @@ export default function Landing() {
             </button>
           </Link>
         </div>
-        
+
         {/*Review Section*/}
         <section className="bg-gray-100 py-16">
           <div className="mx-auto max-w-2xl px-6 text-center">
-            <h2 className="text-3xl font-semibold text-gray-900">Leave a Review</h2>
+            <h2 className="text-3xl font-semibold text-gray-900">
+              Leave a Review
+            </h2>
             <p className="mt-4 text-lg text-gray-600">
-              We value your feedback. Please share your thoughts about our platform.
+              We value your feedback. Please share your thoughts about our
+              platform.
             </p>
             <div
               onMouseLeave={() => setHoverRating(0)}
@@ -122,7 +126,7 @@ export default function Landing() {
             <form className="mt-8 space-y-4">
               <textarea
                 className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                rows="4"
+                rows={4}
                 placeholder="Write your review here..."
               ></textarea>
               <button
