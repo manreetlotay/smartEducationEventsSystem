@@ -1,8 +1,9 @@
 from typing import List
-from sqlmodel import Field, LargeBinary, SQLModel
+from sqlmodel import JSON, Column, Field, LargeBinary, Relationship, SQLModel
 from enum import Enum
 import datetime as dt
 
+from models.ticket import Ticket
 from models.user import User
 
 
@@ -19,7 +20,7 @@ class EventBase(SQLModel):
 class Event(EventBase):
     description: str
     event_format: EventFormat
-    tags: List[str]
+    tags: list[str] | None = Field(default=None, sa_column=Column(JSON))
     banner_image: bytes | None = Field(default=None, sa_column=LargeBinary)
     start_date: dt.datetime
     end_date: dt.datetime
@@ -34,7 +35,9 @@ class Event(EventBase):
 
 
 class DbEvent(Event, table=True):
+    __tablename__ = "events"
     id: int | None = Field(default=None, primary_key=True)
+    users: List["User"] = Relationship(back_populates="events", link_model=Ticket)
 
 
 class EventPublic(Event):
