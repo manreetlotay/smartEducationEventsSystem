@@ -41,6 +41,13 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
     });
   };
 
+  const updateField = (name: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
@@ -145,9 +152,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
               onChange={(e) => {
                 // Filter out any non-numeric characters
                 const numericValue = e.target.value.replace(/[^0-9]/g, '');
-                // Limit to 16 digits
                 if (numericValue.length <= 16) {
-                  handleChange({ target: { name: 'cardNumber', value: numericValue } });
+                  updateField('cardNumber', numericValue);
                 }
               }}
               placeholder="1234567890123456"
@@ -172,9 +178,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
                 value={formData.expiryDate}
                 onChange={(e) => {
                   const numericValue = e.target.value.replace(/[^0-9]/g, '');
-                  // Limit to 4 digits for MMYY
                   if (numericValue.length <= 4) {
-                    handleChange({ target: { name: 'expiryDate', value: numericValue } });
+                    updateField('expiryDate', numericValue);
                   }
                 }}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -197,9 +202,8 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
                 value={formData.cvv}
                 onChange={(e) => {
                   const numericValue = e.target.value.replace(/[^0-9]/g, '');
-                  // Limit to 3 digits for CVV
                   if (numericValue.length <= 3) {
-                    handleChange({ target: { name: 'cvv', value: numericValue } });
+                    updateField('cvv', numericValue);
                   }
                 }}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-indigo-500 focus:border-indigo-500"
