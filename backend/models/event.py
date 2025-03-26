@@ -1,10 +1,6 @@
-from typing import List
-from sqlmodel import JSON, Column, Field, LargeBinary, Relationship, SQLModel
+from sqlmodel import JSON, Column, Field, LargeBinary, SQLModel
 from enum import Enum
 import datetime as dt
-
-from models.ticket import Ticket
-from models.user import User
 
 
 class EventFormat(str, Enum):
@@ -31,13 +27,12 @@ class Event(EventBase):
     is_free: bool
     price: float | None
     agenda: str
-    admin: User
+    admin_id: int | None
 
 
 class DbEvent(Event, table=True):
     __tablename__ = "events"
     id: int | None = Field(default=None, primary_key=True)
-    users: List["User"] = Relationship(back_populates="events", link_model=Ticket)
 
 
 class EventPublic(Event):

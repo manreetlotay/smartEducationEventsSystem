@@ -1,4 +1,5 @@
 import datetime as dt
+from enum import Enum
 from typing import Annotated
 
 import jwt
@@ -14,8 +15,11 @@ from db_session import SessionDep
 # to get a string like this run:
 # openssl rand -hex 32
 SECRET_KEY = "b3ab602365eca4438f5464af051346593a69cde811da985e230010b06e8a4ee1"
+REFRESH_SECRET_KEY = \
+    "85cefc14a9af6a182ceebd79252407c0786e1a4bd770f748cb8766eee6822c61"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+REFRESH_TOKEN_EXPIRE_DAYS = 10
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -24,7 +28,13 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 class Token(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str
+
+
+class TokenType(str, Enum):
+    ACCESS = "access"
+    REFRESH = "refresh"
 
 
 class TokenData(BaseModel):
@@ -49,15 +59,35 @@ def authenticate_user(session: SessionDep, username: str, password: str):
     return user
 
 
-def create_access_token(data: dict, expires_delta: dt.timedelta | None = None):
+def create_access_token(data: dict):
     to_encode = data.copy()
-    if expires_delta:
-        expire = dt.datetime.now(dt.timezone.utc) + expires_delta
-    else:
-        expire = dt.datetime.now(dt.timezone.utc) + dt.timedelta(minutes=15)
-    to_encode.update({"exp": expire})
+    expire = dt.datetime.now(dt.timezone.utc) + \
+        dt.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire, "token_type": TokenType.ACCESS})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+
+def create_refresh_token(data: dict) -> str:
+    to_encode = data.copy()
+    expire = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None) + \
+        dt.timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    to_encode.update({"exp": expire, "token_type": TokenType.REFRESH})
+    encoded_jwt: str = \
+        jwt.encode(to_encode, REFRESH_SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+
+def verify_token(token: str):
+    try:
+        payload = jwt.decode(token, REFRESH_SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Invalid token")
 
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],

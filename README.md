@@ -36,52 +36,38 @@ Ensure you have the following installed:
 
 ### Start the backend Django Server on Terminal 2
 
-1. Create virtual environment
-
-   ```sh
-   python -m venv .env
-
-   ```
-
-2. Activate python virtual environment
-
-   ```sh
-   .\.env\Scripts\Activate # Command for windows
-
-   ```
-
-3. Install dependencies
-
-   ```sh
-   pip install -r requirements.txt
-
-   ```
-
-4. Navigate to the backend folder
+1. Navigate to Backend Folder
 
    ```sh
    cd backend
 
    ```
 
-5. Make database migrations
+2. Create virtual environment
 
    ```sh
-   python manage.py makemigrations sees
+   python -m venv .env
 
    ```
 
-6. Create Super User (Optional)
+3. Activate python virtual environment
 
    ```sh
-   python manage.py createsuperuser # Admin page can be accessed from /admin
+   .\.env\Scripts\Activate # Command for windows
 
    ```
 
-7. Run Server
+4. Install dependencies
 
    ```sh
-   python manage.py runserver
+   pip install -r requirements.txt
+
+   ```
+
+5. Run Server
+
+   ```sh
+   fastapi run main.py
 
    ```
 

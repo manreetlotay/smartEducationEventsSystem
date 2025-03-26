@@ -1,8 +1,5 @@
-from typing import List
-from sqlmodel import Field, Relationship, SQLModel, LargeBinary
+from sqlmodel import Field, SQLModel, LargeBinary
 from enum import Enum
-
-from models.ticket import Ticket
 
 
 class UserType(str, Enum):
@@ -32,7 +29,6 @@ class DbUser(User, table=True):
     __tablename__ = "users"
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: str
-    events: List["Event"] = Relationship(back_populates="users", link_model=Ticket)
 
 
 class UserPublic(User):
