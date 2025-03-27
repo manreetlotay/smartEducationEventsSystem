@@ -29,10 +29,12 @@ class DbUser(User, table=True):
     __tablename__ = "users"
     id: int | None = Field(default=None, primary_key=True)
     hashed_password: str
+    is_site_admin: bool = Field(default=False)
 
 
 class UserPublic(User):
     id: int
+    is_site_admin: bool
 
 
 class UserCreate(User):

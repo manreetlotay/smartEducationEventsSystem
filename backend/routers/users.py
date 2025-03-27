@@ -1,10 +1,10 @@
 
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Security
 from sqlmodel import select
 from db_session import SessionDep
 from auth.auth import get_current_user, get_password_hash
-from models.user import DbUser, UserCreate, UserPublic, UserUpdate
+from models.user import DbUser, User, UserCreate, UserPublic, UserUpdate
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -32,7 +32,8 @@ def read_users(
 
 @router.get("/me", response_model=UserPublic)
 async def read_users_me(
-    current_user: Annotated[UserPublic, Depends(get_current_user)],
+    current_user: Annotated[User, Security(get_current_user,
+                                           scopes=["read_owned_private"])],
 ):
     return current_user
 
@@ -47,7 +48,9 @@ def read_user(user_id: int, session: SessionDep):
 
 @router.get("/search/{username}", response_model=UserPublic)
 def search_user(username: str, session: SessionDep):
-    user = session.exec(select(DbUser).where(DbUser.username == username)).first()
+    user = session.exec(
+        select(DbUser).where(DbUser.username == username)
+        ).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user

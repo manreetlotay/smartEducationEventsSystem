@@ -23,7 +23,7 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = create_access_token(
-        data={"sub": user.username}
+        data={"sub": user.username, "scopes": form_data.scopes}
     )
     refresh_token = create_refresh_token(
         data={"sub": user.username})

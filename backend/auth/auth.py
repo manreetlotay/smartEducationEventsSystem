@@ -6,9 +6,9 @@ import jwt
 from passlib.context import CryptContext
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, SecurityScopes
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from db_session import SessionDep
 
@@ -23,7 +23,25 @@ REFRESH_TOKEN_EXPIRE_DAYS = 10
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token",
+        scopes={
+            "read_public": "Public Read Access",
+            "read_owned_private": "Owned Read Access",
+            "read_unowned_private": "Unowned Private Read Access",
+            "write_owned_private": "Private Write Access",
+            "write_public": "Public Write Access",
+            "write_unowned_private": "Unowned Private Write Access",
+        },
+    )
+
+
+def user_permissions():
+    return ["read_public", "read_owned_private", "write_owned_private"]
+
+
+def admin_permissions():
+    return ["read_public", "read_owned_private", "write_owned_private",
+            "read_unowned_private", "write_public", "write_unowned_private",]
 
 
 class Token(BaseModel):
@@ -39,6 +57,7 @@ class TokenType(str, Enum):
 
 class TokenData(BaseModel):
     username: str | None = None
+    scopes: list[str] = []
 
 
 def verify_password(plain_password, hashed_password):
@@ -90,23 +109,36 @@ def verify_token(token: str):
                             detail="Invalid token")
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],
-                           session: SessionDep):
+async def get_current_user(security_scopes: SecurityScopes, 
+                    token: Annotated[str, Depends(oauth2_scheme)], 
+                    session: SessionDep):
+    if security_scopes.scopes:
+        authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
+    else:
+        authenticate_value = "Bearer"
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+        headers={"WWW-Authenticate": authenticate_value},
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")
         if username is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
-    except jwt.InvalidTokenError:
+        token_scopes = payload.get("scopes", [])
+        token_data = TokenData(username=username, scopes=token_scopes)
+    except (jwt.InvalidTokenError, ValidationError):
         raise credentials_exception
     from routers.users import search_user
     user = search_user(username=token_data.username, session=session)
     if user is None:
         raise credentials_exception
+    for scope in security_scopes.scopes:
+        if scope not in token_data.scopes:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Not enough permissions",
+                headers={"WWW-Authenticate": authenticate_value},
+            )
     return user
