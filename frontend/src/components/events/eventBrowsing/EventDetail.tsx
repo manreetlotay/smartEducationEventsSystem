@@ -110,7 +110,7 @@ const EventDetail: React.FC = () => {
             <img
               src={user.profileImage}
               alt={
-                user.userType === USER_TYPE.INDIVIDUAL
+                user.userType === "individual"
                   ? `${user.firstName} ${user.lastName}`
                   : user.organizationName
               }
@@ -118,7 +118,7 @@ const EventDetail: React.FC = () => {
             />
           )}
           <div>
-            {user.userType === USER_TYPE.INDIVIDUAL ? (
+            {user.userType === "individual" ? (
               <div>
                 <h3 className="font-medium text-gray-800 dark:text-white">
                   {user.firstName} {user.lastName}
@@ -265,7 +265,7 @@ const EventDetail: React.FC = () => {
                   Organized by{" "}
                   <span className="font-medium">
                     {event.organizers.length > 0
-                      ? event.organizers[0].userType === USER_TYPE.INDIVIDUAL
+                      ? event.organizers[0].userType === "individual"
                         ? `${event.organizers[0].firstName} ${event.organizers[0].lastName}`
                         : event.organizers[0].organizationName
                       : "Unknown"}
@@ -539,7 +539,7 @@ const EventDetail: React.FC = () => {
                           Event Administrator
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                          {event.eventAdmin.userType === USER_TYPE.INDIVIDUAL
+                          {event.eventAdmin.userType === "individual"
                             ? `${event.eventAdmin.firstName} ${event.eventAdmin.lastName}`
                             : event.eventAdmin.organizationName}
                         </p>
@@ -600,7 +600,7 @@ const EventDetail: React.FC = () => {
                       ? "Register for Free"
                       : `Register Now • $${event.price}`}
                   </button>
-                  
+
                   {/* Render PaymentSuccess for free events */}
                   {event.isFree && showPaymentSuccess && (
                     <PaymentSuccess
@@ -609,7 +609,7 @@ const EventDetail: React.FC = () => {
                       onClose={() => setShowPaymentSuccess(false)}
                     />
                   )}
-                  
+
                   {isNearlyFull && (
                     <p className="text-center text-sm text-red-500 dark:text-red-400 mt-2">
                       Almost sold out! Register soon.
@@ -621,7 +621,7 @@ const EventDetail: React.FC = () => {
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };

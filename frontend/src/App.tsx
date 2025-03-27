@@ -9,28 +9,31 @@ import EventDet from "./views/EventDet";
 import MyCreatedEvents from "./views/MyCreatedEvents";
 import CreateEventPage from "./views/CreateEventPage";
 import CreateEvent from "./components/events/eventPlanning/CreateEvent";
+import { AuthProvider } from "./lib/hooks/useAuth";
 
 function App() {
   return (
     <>
-      <EventProvider>
-        <Router>
-          <Routes>
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/" element={<Home />} />
-            <Route path="/footer" element={<Footer />} />
-            <Route path="/events" element={<BrowseEvents />} />
-            <Route path="/det/:id" element={<EventDet />} />
-            <Route path="/myevents" element={<MyCreatedEvents />} />
-            <Route path="/createevent" element={<CreateEventPage />} />
-            {/* <Route
+      <AuthProvider>
+        <EventProvider>
+          <Router>
+            <Routes>
+              <Route path="/signin" element={<SignIn />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/footer" element={<Footer />} />
+              <Route path="/events" element={<BrowseEvents />} />
+              <Route path="/det/:id" element={<EventDet />} />
+              <Route path="/myevents" element={<MyCreatedEvents />} />
+              <Route path="/createevent" element={<CreateEventPage />} />
+              {/* <Route
               path="/createevent/:eventId"
               element={<CreateEvent mode="edit" />}
             />{" "} */}
-          </Routes>
-        </Router>
-      </EventProvider>
+            </Routes>
+          </Router>
+        </EventProvider>
+      </AuthProvider>
     </>
   );
 }

@@ -14,9 +14,8 @@ export interface User {
 
   organizationName: string;
   organizationAddress: string;
+
+  is_site_admin: boolean;
 }
 
-export enum USER_TYPE {
-  INDIVIDUAL = "individual",
-  ORGANIZATION = "organization",
-}
+export type USER_TYPE = "individual" | "organization";

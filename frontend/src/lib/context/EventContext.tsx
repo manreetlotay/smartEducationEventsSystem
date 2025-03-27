@@ -6,7 +6,6 @@ import React, {
   useEffect,
 } from "react";
 import { Event, EVENT_FORMAT } from "../types/Events";
-import { USER_TYPE } from "../types/User";
 
 // Mock data - Will be replaced with API calls in production
 const mockEvents: Event[] = [
@@ -37,12 +36,13 @@ const mockEvents: Event[] = [
         phoneNumber: "415-555-1234",
         profileImage:
           "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-        userType: USER_TYPE.ORGANIZATION,
+        userType: "organization",
         points: 0,
         firstName: "",
         lastName: "",
         organizationName: "TechConf Inc.",
         organizationAddress: "100 Market Street, San Francisco, CA 94103",
+        is_site_admin: false,
       },
     ],
     sponsors: [
@@ -53,12 +53,13 @@ const mockEvents: Event[] = [
         phoneNumber: "415-555-9876",
         profileImage:
           "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-        userType: USER_TYPE.ORGANIZATION,
+        userType: "organization",
         points: 0,
         firstName: "",
         lastName: "",
         organizationName: "Future Tech Industries",
         organizationAddress: "200 Mission Street, San Francisco, CA 94105",
+        is_site_admin: false,
       },
     ],
     speakers: [
@@ -69,7 +70,7 @@ const mockEvents: Event[] = [
         phoneNumber: "415-555-5678",
         profileImage:
           "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-        userType: USER_TYPE.INDIVIDUAL,
+        userType: "individual",
         profession: "AI Researcher",
         points: 0,
         firstName: "Jane",
@@ -77,6 +78,7 @@ const mockEvents: Event[] = [
         affiliation: "Tech University",
         organizationName: "",
         organizationAddress: "",
+        is_site_admin: false,
       },
     ],
     attendees: [],
@@ -88,21 +90,21 @@ const mockEvents: Event[] = [
       phoneNumber: "415-555-2345",
       profileImage:
         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-      userType: USER_TYPE.INDIVIDUAL,
+      userType: "individual",
       points: 0,
       firstName: "Admin",
       lastName: "User",
       organizationName: "",
       organizationAddress: "",
+      is_site_admin: false,
     },
   },
   {
     id: "2",
-    name: "Virtual Marketing Workshop",
-    description:
-      "A comprehensive online workshop for marketing professionals looking to enhance their digital marketing skills.",
+    name: "Machine Learning Workshop",
+    description: "A comprehensive online workshop for AI enthusiasts.",
     format: EVENT_FORMAT.ONLINE,
-    tags: ["Marketing", "Digital", "Workshop"],
+    tags: ["Machine Learning", "AI"],
     bannerImage:
       "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1567&q=80",
     startDate: new Date("2025-05-10T10:00:00"),
@@ -122,12 +124,13 @@ const mockEvents: Event[] = [
         phoneNumber: "415-555-6789",
         profileImage:
           "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-        userType: USER_TYPE.ORGANIZATION,
+        userType: "organization",
         points: 0,
         firstName: "",
         lastName: "",
         organizationName: "Digital Marketing Experts",
         organizationAddress: "456 Market Street, San Francisco, CA 94103",
+        is_site_admin: false,
       },
     ],
     sponsors: [],
@@ -139,7 +142,7 @@ const mockEvents: Event[] = [
         phoneNumber: "415-555-8765",
         profileImage:
           "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-        userType: USER_TYPE.INDIVIDUAL,
+        userType: "individual",
         profession: "Marketing Director",
         points: 0,
         firstName: "Sarah",
@@ -147,6 +150,7 @@ const mockEvents: Event[] = [
         affiliation: "Marketing Innovations Ltd.",
         organizationName: "",
         organizationAddress: "",
+        is_site_admin: false,
       },
     ],
     attendees: [],
@@ -158,21 +162,22 @@ const mockEvents: Event[] = [
       phoneNumber: "415-555-7890",
       profileImage:
         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-      userType: USER_TYPE.INDIVIDUAL,
+      userType: "individual",
       points: 0,
       firstName: "Marketing",
       lastName: "Admin",
       organizationName: "",
       organizationAddress: "",
+      is_site_admin: false,
     },
   },
   {
     id: "3",
-    name: "Local Networking Meetup",
+    name: "Next.js Upcoming Release",
     description:
-      "Connect with professionals in your area over coffee and light refreshments. Exchange ideas and build valuable business relationships.",
+      "Connect with professionals in your area. Discuss the features of the new release",
     format: EVENT_FORMAT.PERSON,
-    tags: ["Networking", "Business", "Local"],
+    tags: ["Release", "Framework", "JavaScript"],
     bannerImage:
       "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1567&q=80",
     startDate: new Date("2025-06-05T18:00:00"),
@@ -189,12 +194,13 @@ const mockEvents: Event[] = [
         email: "businessnetwork@example.com",
         password: "",
         phoneNumber: "415-555-3456",
-        userType: USER_TYPE.ORGANIZATION,
+        userType: "organization",
         points: 0,
         firstName: "",
         lastName: "",
         organizationName: "SF Business Network",
         organizationAddress: "789 Oak Street, San Francisco, CA 94107",
+        is_site_admin: false,
       },
     ],
     sponsors: [],
@@ -206,12 +212,13 @@ const mockEvents: Event[] = [
       email: "network.admin@example.com",
       password: "",
       phoneNumber: "415-555-6543",
-      userType: USER_TYPE.INDIVIDUAL,
+      userType: "individual",
       points: 0,
       firstName: "Network",
       lastName: "Coordinator",
       organizationName: "",
       organizationAddress: "",
+      is_site_admin: false,
     },
   },
 ];

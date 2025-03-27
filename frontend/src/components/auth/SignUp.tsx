@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../lib/hooks/useAuth";
 
 export default function SignUp() {
+  const navigate = useNavigate();
+  const { signUp, error: authError, isLoading } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -11,13 +15,62 @@ export default function SignUp() {
   const [profession, setProfession] = useState("");
   const [organizationName, setOrganizationName] = useState("");
   const [organizationAddress, setOrganizationAddress] = useState("");
-  const [error, setError] = useState("");
+  const [formError, setFormError] = useState("");
   const [isOrganization, setIsOrganization] = useState(false); // State for checkbox
 
-  const handleSubmit = async () => {
-    // Submit logic here
-  };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError("");
 
+    try {
+      // Validate form fields
+      if (!email || !password || !phoneNumber) {
+        setFormError("Please fill in all required fields");
+        return;
+      }
+
+      console.log("email", email);
+
+      if (isOrganization) {
+        if (!organizationName || !organizationAddress) {
+          setFormError("Please fill in all required organization fields");
+          return;
+        }
+
+        // Call signUp with organization user data
+        await signUp({
+          email,
+          password,
+          phoneNumber,
+          userType: "organization",
+          organizationName,
+          organizationAddress,
+        });
+      } else {
+        if (!firstName || !lastName) {
+          setFormError("Please fill in all required fields");
+          return;
+        }
+
+        // Call signUp with individual user data
+        await signUp({
+          email,
+          password,
+          phoneNumber,
+          userType: "individual",
+          firstName,
+          lastName,
+          profession: profession || undefined,
+          affiliation: affiliation || undefined,
+        });
+      }
+
+      // If successful, navigate to home or dashboard
+      navigate("/");
+    } catch (error) {
+      console.error("Sign up error:", error);
+    }
+  };
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -28,7 +81,8 @@ export default function SignUp() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action="#" method="POST" className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {" "}
             {/* Checkbox for "Is Organization" */}
             <div className="flex items-center">
               <input
@@ -46,7 +100,6 @@ export default function SignUp() {
                 I am an organization
               </label>
             </div>
-
             {/* Conditional rendering based on checkbox */}
             {isOrganization ? (
               <>
@@ -289,24 +342,26 @@ export default function SignUp() {
                 </div>
               </>
             )}
-
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-gray-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                disabled={isLoading}
+                className="flex w-full justify-center rounded-md bg-gray-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50"
               >
-                Sign up
+                {isLoading ? "Signing up..." : "Sign up"}
               </button>
-              <div id="alert-1" className="ms-3 text-sm font-medium">
-                {error}
-              </div>
+              {(formError || authError) && (
+                <div className="mt-2 text-sm font-medium text-red-600">
+                  {formError || authError}
+                </div>
+              )}
             </div>
           </form>
 
           <p className="mt-10 text-center text-sm/6 text-gray-500">
             Already have an account?{" "}
             <a
-              href="/signIn"
+              href="/signin"
               className="font-semibold text-gray-500 hover:text-blue-500"
             >
               Sign In
