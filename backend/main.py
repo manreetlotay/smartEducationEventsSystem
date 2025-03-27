@@ -17,13 +17,14 @@ async def lifespan(app: FastAPI):
     # Maybe do something here later
 
 from models.user import DbUser
-from routers import auth, users, events
+from routers import auth, users, events, tickets
 
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(events.router)
+app.include_router(tickets.router)
 
 origins = [
     "http://localhost:5173",
