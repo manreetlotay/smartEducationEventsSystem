@@ -8,6 +8,7 @@ import PaymentSuccess from "../../payment/PaymentSuccess";
 import { useEventContext } from "../../../lib/context/EventContext";
 import { PencilIcon } from "@heroicons/react/20/solid";
 import Footer from "../../footer/Footer";
+import { Instagram, Facebook, Linkedin } from "lucide-react";
 
 const EventDetail: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -616,10 +617,56 @@ const EventDetail: React.FC = () => {
                     </p>
                   )}
                 </div>
+                <div className="w-full bg-white dark:bg-gray-700 rounded-lg shadow-xl overflow-hidden mt-12">
+                <div className="max-w-4xl mx-auto px-6 py-6">
+                  <div className="flex flex-col items-center space-y-4">
+                    <h3 className="text-xl font-bold text-gray-800 dark:text-white text-center">
+                      Add This Event to Your Story!
+                    </h3>
+                    
+                    <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
+                      Share this event with your network and help spread the word
+                    </p>
+                    
+                    <button
+                      className="w-full max-w-md px-6 py-3 bg-[#49475B] text-white font-medium rounded-lg hover:bg-gray-500 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#49475B]"
+                    >
+                      Promote Now!
+                    </button>
+                    
+                    <div className="flex justify-center space-x-4">
+                      <a 
+                        href="https://www.instagram.com" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
+                      >
+                        <Instagram size={24} className="text-[#E1306C]" />
+                      </a>
+                      <a 
+                        href="https://www.facebook.com" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
+                      >
+                        <Facebook size={24} className="text-[#3b5998]" />
+                      </a>
+                      <a 
+                        href="https://www.linkedin.com" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
+                      >
+                        <Linkedin size={24} className="text-[#0A66C2]" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
       </div>
       <Footer/>
     </>
