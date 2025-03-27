@@ -40,7 +40,6 @@ app.add_middleware(
 
 
 def create_admin():
-    username = input("Enter username: ").strip()
     email = input("Enter email: ").strip()
     
     matching = False
@@ -59,7 +58,6 @@ def create_admin():
     hashed_password = get_password_hash(password=password)
     
     admin_user = DbUser(
-        username=username,
         email=email,
         hashed_password=hashed_password,
         is_site_admin=True,
@@ -77,7 +75,7 @@ def create_admin():
     with Session(engine) as session:
         session.add(admin_user)
         session.commit()
-        print(f"Admin user {username} created successfully.")
+        print(f"Admin user {email} created successfully.")
 
 
 @app.get("/")

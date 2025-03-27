@@ -7,11 +7,7 @@ class UserType(str, Enum):
     ORGANIZATION = "organization",
 
 
-class UserBase(SQLModel):
-    username: str = Field(index=True, nullable=False, unique=True)
-
-
-class User(UserBase):
+class User(SQLModel):
     points: int = Field(default=0)
     email: str = Field(index=True, nullable=False, unique=True)
     phone_number: str

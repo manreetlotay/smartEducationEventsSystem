@@ -38,7 +38,7 @@ class TokenType(str, Enum):
 
 
 class TokenData(BaseModel):
-    username: str | None = None
+    email: str | None = None
 
 
 def verify_password(plain_password, hashed_password):
@@ -49,9 +49,9 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def authenticate_user(session: SessionDep, username: str, password: str):
+def authenticate_user(session: SessionDep, email: str, password: str):
     from routers.users import search_user
-    user = search_user(username, session)
+    user = search_user(email, session)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
@@ -99,14 +99,14 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username = payload.get("sub")
-        if username is None:
+        email = payload.get("sub")
+        if email is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
+        token_data = TokenData(email=email)
     except jwt.InvalidTokenError:
         raise credentials_exception
     from routers.users import search_user
-    user = search_user(username=token_data.username, session=session)
+    user = search_user(email=token_data.email, session=session)
     if user is None:
         raise credentials_exception
     return user
