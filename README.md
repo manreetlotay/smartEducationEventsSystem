@@ -64,7 +64,14 @@ Ensure you have the following installed:
 
    ```
 
-5. Run Server
+5. Create Admin User (Optional)
+
+   ```sh
+   python main.py create_admin
+
+   ```
+
+6. Run Server
 
    ```sh
    fastapi run main.py
