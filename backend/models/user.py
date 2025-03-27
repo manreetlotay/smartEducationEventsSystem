@@ -23,6 +23,7 @@ class User(UserBase):
     affiliation: str | None
     organization_name: str | None
     organization_address: str | None
+    is_site_admin: bool = Field(default=False)
 
 
 class DbUser(User, table=True):

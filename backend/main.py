@@ -1,7 +1,11 @@
 from contextlib import asynccontextmanager
+import getpass
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from db_session import create_db_and_tables
+from sqlmodel import Session
+from db_session import create_db_and_tables, engine
+from auth.auth import get_password_hash
+import sys
 import uvicorn
 
 
@@ -12,6 +16,7 @@ async def lifespan(app: FastAPI):
     yield
     # Maybe do something here later
 
+from models.user import DbUser
 from routers import auth, users, events
 
 app = FastAPI(lifespan=lifespan)
@@ -33,9 +38,55 @@ app.add_middleware(
 )
 
 
+def create_admin():
+    username = input("Enter username: ").strip()
+    email = input("Enter email: ").strip()
+    
+    matching = False
+    while not matching:
+        password = getpass.getpass("Enter password: ").strip()
+        confirm_password = getpass.getpass("Confirm password: ").strip()
+        print(password)
+        print(confirm_password)
+
+        if password != confirm_password:
+            print("Passwords do not match. Try again.")
+        else:
+            matching = True
+    
+    create_db_and_tables()
+    hashed_password = get_password_hash(password=password)
+    
+    admin_user = DbUser(
+        username=username,
+        email=email,
+        hashed_password=hashed_password,
+        is_site_admin=True,
+        phone_number="0000000000",
+        first_name="Admin",
+        last_name="User",
+        user_type="individual",
+        points=0,
+        affiliation=None,
+        profession=None,
+        organization_name=None,
+        organization_address=None,
+    )
+
+    with Session(engine) as session:
+        session.add(admin_user)
+        session.commit()
+        print(f"Admin user {username} created successfully.")
+
+
 @app.get("/")
 async def root():
     return {"message": "Hello API"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=8000)
+    args = sys.argv
+
+    if 'create_admin' in args:
+        create_admin()
+    else:
+        uvicorn.run(app, host="localhost", port=8000)
