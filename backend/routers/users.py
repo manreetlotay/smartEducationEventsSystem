@@ -59,6 +59,14 @@ async def update_user_me(
     return user_db
 
 
+@router.get("/search/{email}", response_model=UserPublic)
+def search_user(email: str, session: SessionDep):
+    user = session.exec(select(DbUser).where(DbUser.email == email)).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+
 @router.get("/{user_id}", response_model=UserPublic)
 def read_user(user_id: int, session: SessionDep):
     user = session.get(DbUser, user_id)

@@ -5,13 +5,14 @@ from fastapi.security import OAuth2PasswordRequestForm
 from db_session import SessionDep
 from auth.auth import Token, authenticate_user, create_access_token, \
     create_refresh_token, verify_token
+from forms.auth import LoginForm
 
 router = APIRouter(prefix="/token", tags=["Authentication"])
 
 
 @router.post("/")
 async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    form_data: Annotated[LoginForm, Depends()],
     session: SessionDep
 ) -> Token:
     user = authenticate_user(
