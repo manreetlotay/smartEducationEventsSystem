@@ -3,6 +3,8 @@ from fastapi import APIRouter, HTTPException, Query
 from sqlmodel import select
 from db_session import SessionDep
 from models.event import Event, DbEvent, EventPublic
+from models.ticket import DbTicket, UserRole
+from models.user import DbUser, UserPublic
 
 router = APIRouter(prefix="/events", tags=["Events"])
 
@@ -56,3 +58,108 @@ def delete_event(event_id: int, session: SessionDep):
     session.delete(event)
     session.commit()
     return {"ok": True}
+
+
+@router.get("/{event_id}/users", response_model=list[UserPublic])
+def users(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbUser)
+        .join(DbTicket, DbUser.id == DbTicket.user_id)
+        .where(DbTicket.event_id == event_id)
+    )
+    users = session.exec(query).all()
+    return users
+
+
+
+@router.get("/{event_id}/organizers", response_model=list[UserPublic])
+def organizers(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbUser)
+        .join(DbTicket, DbUser.id == DbTicket.user_id)
+        .where(DbTicket.event_id == event_id and
+               DbTicket.role == UserRole.ORGANIZER)
+    )
+    users = session.exec(query).all()
+    return users
+
+
+@router.get("/{event_id}/attendees", response_model=list[UserPublic])
+def attendees(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbUser)
+        .join(DbTicket, DbUser.id == DbTicket.user_id)
+        .where(DbTicket.event_id == event_id and
+               DbTicket.role == UserRole.ATTENDEE)
+    )
+    users = session.exec(query).all()
+    return users
+
+
+@router.get("/{event_id}/speakers", response_model=list[UserPublic])
+def speakers(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbUser)
+        .join(DbTicket, DbUser.id == DbTicket.user_id)
+        .where(DbTicket.event_id == event_id and
+               DbTicket.role == UserRole.SPEAKER)
+    )
+    users = session.exec(query).all()
+    return users
+
+
+@router.get("/{event_id}/sponsors", response_model=list[UserPublic])
+def sponsors(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbUser)
+        .join(DbTicket, DbUser.id == DbTicket.user_id)
+        .where(DbTicket.event_id == event_id and
+               DbTicket.role == UserRole.SPONSOR)
+    )
+    users = session.exec(query).all()
+    return users
+
+
+@router.get("/{event_id}/stakeholders", response_model=list[UserPublic])
+def stakeholders(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbUser)
+        .join(DbTicket, DbUser.id == DbTicket.user_id)
+        .where(DbTicket.event_id == event_id and
+               DbTicket.role == UserRole.STAKEHOLDER)
+    )
+    users = session.exec(query).all()
+    return users
+
+
+@router.get("/{event_id}/eventAdmins", response_model=list[UserPublic])
+def eventAdmins(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbUser)
+        .join(DbTicket, DbUser.id == DbTicket.user_id)
+        .where(DbTicket.event_id == event_id and
+               DbTicket.role == UserRole.EVENT_ADMIN)
+    )
+    users = session.exec(query).all()
+    return users
