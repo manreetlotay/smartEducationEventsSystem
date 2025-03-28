@@ -8,7 +8,6 @@ import PaymentSuccess from "../../payment/PaymentSuccess";
 import { useEventContext } from "../../../lib/context/EventContext";
 import { PencilIcon } from "@heroicons/react/20/solid";
 import Footer from "../../footer/Footer";
-import { Instagram, Facebook, Linkedin } from "lucide-react";
 
 const EventDetail: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -22,46 +21,38 @@ const EventDetail: React.FC = () => {
   const [showPaymentPage, setShowPaymentPage] = useState(false);
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
 
-  // Check if current user is the admin of this event (admin1 is replaced with id of current logged in user)
+  // Check if current user is admin (for example, admin id is "admin1")
   const isEventAdmin = event && event.eventAdmin.id === "admin1";
 
-  // Handle edit button click
   const handleEditClick = () => {
-    if (event != null) navigate(`/createevent/${event.id}`);
+    if (event != null) {
+      // Navigate to CreateEvent page in edit mode using the event id and query parameter
+      navigate(`/createevent/${event.id}?mode=edit`);
+    }
   };
 
-  // Fetch event details based on ID
   useEffect(() => {
     const fetchEventDetail = async () => {
       try {
         setLoading(true);
-
-        // First try to get event from router state
         if (location.state?.event) {
           setEvent(location.state.event);
           setLoading(false);
           return;
         }
-
-        // Then try to get event from context
         const contextEvent = getEventById(eventId || "");
         if (contextEvent) {
           setEvent(contextEvent);
           setLoading(false);
           return;
         }
-
-        // If not found in context, try to refresh events from API
         await fetchEvents();
-
-        // Check again after refresh
         const refreshedEvent = getEventById(eventId || "");
         if (refreshedEvent) {
           setEvent(refreshedEvent);
         } else {
           setError("Event not found");
         }
-
         setLoading(false);
       } catch (err) {
         setError("Failed to load event details");
@@ -86,20 +77,13 @@ const EventDetail: React.FC = () => {
 
   const registerForEvent = () => {
     if (!event) return;
-
     if (event.isFree) {
-      // Handle free registration logic
-      console.log("Processing free registration");
       setShowPaymentSuccess(true);
-      // Perhaps redirect to a confirmation page
-      // navigate(`/events/${eventId}/registered`);
     } else {
-      // For paid events, show the payment page
       setShowPaymentPage(true);
     }
   };
 
-  // Render user card based on user type
   const renderUserCard = (user: User) => {
     return (
       <div
@@ -154,7 +138,6 @@ const EventDetail: React.FC = () => {
     );
   };
 
-  // If payment page is shown, render it
   if (showPaymentPage && event && !event.isFree) {
     return (
       <PaymentPage
@@ -181,13 +164,9 @@ const EventDetail: React.FC = () => {
     );
   }
 
-  // Calculate remaining spots and check if event is nearly full
   const remainingSpots = event.capacity - (event.attendees?.length || 0);
-
-  // Calculate if event is nearly full (90% capacity)
   const isNearlyFull = (event.attendees?.length || 0) >= event.capacity * 0.9;
 
-  // Format event type badge
   const getFormatBadge = () => {
     switch (event.format) {
       case EVENT_FORMAT.ONLINE:
@@ -216,7 +195,6 @@ const EventDetail: React.FC = () => {
   return (
     <>
       <div className="max-w-6xl mx-auto mt-30 px-4 pb-16 relative z-10">
-        {/* Admin Action Bar - Only shown to event admins */}
         {isEventAdmin && (
           <div className="bg-gray-200 p-4 mb-6 rounded-md flex justify-end items-center">
             <button
@@ -228,22 +206,13 @@ const EventDetail: React.FC = () => {
             </button>
           </div>
         )}
-
-        {/* Banner Image */}
         {event.bannerImage && (
           <div className="w-full h-64 md:h-80 overflow-hidden rounded-t-lg mb-6">
-            <img
-              src={event.bannerImage}
-              alt={event.name}
-              className="w-full h-full object-cover"
-            />
+            <img src={event.bannerImage} alt={event.name} className="w-full h-full object-cover" />
           </div>
         )}
-
-        {/* Main content card */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden">
           <div className="p-6 md:p-8">
-            {/* Title and tags section */}
             <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-6">
               <div>
                 <div className="flex items-center gap-2 mb-3">
@@ -283,19 +252,14 @@ const EventDetail: React.FC = () => {
                     ${event.price}
                   </div>
                 )}
-                {/* Registration deadline */}
                 {event.registrationDeadline && (
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                    Registration Deadline:{" "}
-                    {formatDateTime(event.registrationDeadline)}
+                    Registration Deadline: {formatDateTime(event.registrationDeadline)}
                   </p>
                 )}
               </div>
             </div>
-
-            {/* Three column layout for details */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Left column with description and agenda */}
               <div className="lg:col-span-2">
                 <div className="prose dark:prose-invert max-w-none">
                   <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
@@ -304,7 +268,6 @@ const EventDetail: React.FC = () => {
                   <p className="text-gray-600 dark:text-gray-300 whitespace-pre-line mb-8">
                     {event.description}
                   </p>
-
                   <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
                     Agenda
                   </h2>
@@ -313,8 +276,6 @@ const EventDetail: React.FC = () => {
                       {event.agenda}
                     </pre>
                   </div>
-
-                  {/* Speakers Section */}
                   <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
                     Meet the Speakers
                   </h2>
@@ -327,8 +288,6 @@ const EventDetail: React.FC = () => {
                       Speakers to be announced
                     </p>
                   )}
-
-                  {/* Organizers Section */}
                   <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
                     Organized By
                   </h2>
@@ -341,8 +300,6 @@ const EventDetail: React.FC = () => {
                       No organizer information available
                     </p>
                   )}
-
-                  {/* Sponsors Section */}
                   {event.sponsors.length > 0 && (
                     <>
                       <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
@@ -353,8 +310,6 @@ const EventDetail: React.FC = () => {
                       </div>
                     </>
                   )}
-
-                  {/* Stakeholders Section */}
                   {event.stakeholders.length > 0 && (
                     <>
                       <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
@@ -367,16 +322,12 @@ const EventDetail: React.FC = () => {
                   )}
                 </div>
               </div>
-
-              {/* Right column with event details */}
               <div className="lg:col-span-1">
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 sticky top-4">
                   <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
                     Event Details
                   </h2>
-
                   <div className="space-y-4">
-                    {/* Date and time */}
                     <div className="flex items-start">
                       <div className="flex-shrink-0 mt-1">
                         <svg
@@ -406,8 +357,6 @@ const EventDetail: React.FC = () => {
                         </p>
                       </div>
                     </div>
-
-                    {/* Format */}
                     <div className="flex items-start">
                       <div className="flex-shrink-0 mt-1">
                         <svg
@@ -438,8 +387,6 @@ const EventDetail: React.FC = () => {
                         </p>
                       </div>
                     </div>
-
-                    {/* Location */}
                     {(event.format === EVENT_FORMAT.PERSON ||
                       event.format === EVENT_FORMAT.HYBRID) &&
                       event.address && (
@@ -476,8 +423,6 @@ const EventDetail: React.FC = () => {
                           </div>
                         </div>
                       )}
-
-                    {/* Virtual Link */}
                     {(event.format === EVENT_FORMAT.ONLINE ||
                       event.format === EVENT_FORMAT.HYBRID) &&
                       event.virtualPlatformLink && (
@@ -516,8 +461,6 @@ const EventDetail: React.FC = () => {
                           </div>
                         </div>
                       )}
-
-                    {/* Event Admin */}
                     <div className="flex items-start">
                       <div className="flex-shrink-0 mt-1">
                         <svg
@@ -549,8 +492,6 @@ const EventDetail: React.FC = () => {
                         </p>
                       </div>
                     </div>
-
-                    {/* Capacity */}
                     <div className="flex items-start">
                       <div className="flex-shrink-0 mt-1">
                         <svg
@@ -573,14 +514,11 @@ const EventDetail: React.FC = () => {
                           Capacity
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                          {event.attendees.length} attending • {remainingSpots}{" "}
-                          spots left
+                          {event.attendees.length} attending • {remainingSpots} spots left
                         </p>
                         <div className="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-full mt-2 overflow-hidden">
                           <div
-                            className={`h-full ${
-                              isNearlyFull ? "bg-red-500" : "bg-[#49475B]"
-                            }`}
+                            className={`h-full ${isNearlyFull ? "bg-red-500" : "bg-[#49475B]"}`}
                             style={{
                               width: `${
                                 (event.attendees.length / event.capacity) * 100
@@ -591,18 +529,12 @@ const EventDetail: React.FC = () => {
                       </div>
                     </div>
                   </div>
-
-                  {/* Registration button */}
                   <button
                     onClick={registerForEvent}
                     className="w-full mt-6 px-6 py-3 bg-[#49475B] text-white font-medium rounded-lg hover:bg-gray-500 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#49475B]"
                   >
-                    {event.isFree
-                      ? "Register for Free"
-                      : `Register Now • $${event.price}`}
+                    {event.isFree ? "Register for Free" : `Register Now • $${event.price}`}
                   </button>
-                  
-                  {/* Render PaymentSuccess for free events */}
                   {event.isFree && showPaymentSuccess && (
                     <PaymentSuccess
                       eventName={event.name}
@@ -610,65 +542,18 @@ const EventDetail: React.FC = () => {
                       onClose={() => setShowPaymentSuccess(false)}
                     />
                   )}
-                  
                   {isNearlyFull && (
                     <p className="text-center text-sm text-red-500 dark:text-red-400 mt-2">
                       Almost sold out! Register soon.
                     </p>
                   )}
                 </div>
-                <div className="w-full bg-white dark:bg-gray-700 rounded-lg shadow-xl overflow-hidden mt-12">
-                <div className="max-w-4xl mx-auto px-6 py-6">
-                  <div className="flex flex-col items-center space-y-4">
-                    <h3 className="text-xl font-bold text-gray-800 dark:text-white text-center">
-                      Add This Event to Your Story!
-                    </h3>
-                    
-                    <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
-                      Share this event with your network and help spread the word
-                    </p>
-                    
-                    <button
-                      className="w-full max-w-md px-6 py-3 bg-[#49475B] text-white font-medium rounded-lg hover:bg-gray-500 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#49475B]"
-                    >
-                      Promote Now!
-                    </button>
-                    
-                    <div className="flex justify-center space-x-4">
-                      <a 
-                        href="https://www.instagram.com" 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
-                      >
-                        <Instagram size={24} className="text-[#E1306C]" />
-                      </a>
-                      <a 
-                        href="https://www.facebook.com" 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
-                      >
-                        <Facebook size={24} className="text-[#3b5998]" />
-                      </a>
-                      <a 
-                        href="https://www.linkedin.com" 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        className="bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
-                      >
-                        <Linkedin size={24} className="text-[#0A66C2]" />
-                      </a>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };
