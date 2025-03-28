@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../lib/hooks/useAuth"; // Update this path if needed
+import { useAuth } from "../../lib/hooks/useAuth";
 
 export default function SignIn() {
   const navigate = useNavigate();
