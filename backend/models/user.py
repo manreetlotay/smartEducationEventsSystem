@@ -17,10 +17,10 @@ class User(UserBase):
     phone_number: str
     profile_image: bytes | None = Field(default=None, sa_column=LargeBinary)
     user_type: UserType = Field(default=UserType.INDIVIDUAL)
-    profession: str | None = Field(nullable=True)
-    first_name: str
-    last_name: str
-    affiliation: str | None
+    profession: str | None = Field(nullable=True, default=None)
+    first_name: str | None = Field(nullable=True, default=None)
+    last_name: str | None = Field(nullable=True, default=None)
+    affiliation: str | None = Field(nullable=True, default=None)
     organization_name: str | None
     organization_address: str | None
     is_site_admin: bool = Field(default=False)
