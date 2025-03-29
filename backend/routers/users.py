@@ -67,14 +67,6 @@ def read_user(user_id: int, session: SessionDep):
     return user
 
 
-@router.get("/search/{username}", response_model=UserPublic)
-def search_user(username: str, session: SessionDep):
-    user = session.exec(select(DbUser).where(DbUser.username == username)).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
-
-
 @router.patch("/{user_id}", response_model=UserPublic)
 def update_user(user_id: int, user: UserUpdate, session: SessionDep,
                 current_user: Annotated[UserPublic, Depends(get_current_user)]):
