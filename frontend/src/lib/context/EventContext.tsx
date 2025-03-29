@@ -23,7 +23,8 @@ const mockEvents: Event[] = [
     capacity: 500,
     registrationDeadline: new Date("2025-04-01T23:59:59"),
     address: "123 Tech Boulevard, San Francisco, CA 94105",
-    virtualPlatformLink: "https://virtual-conference-platform.com/tech2025",
+    virtualPlatformLink:
+      "https://virtual-conference-platform.com/tech2025",
     isFree: true,
     price: 0,
     agenda:
@@ -99,128 +100,7 @@ const mockEvents: Event[] = [
       is_site_admin: false,
     },
   },
-  {
-    id: "2",
-    name: "Machine Learning Workshop",
-    description: "A comprehensive online workshop for AI enthusiasts.",
-    format: EVENT_FORMAT.ONLINE,
-    tags: ["Machine Learning", "AI"],
-    bannerImage:
-      "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1567&q=80",
-    startDate: new Date("2025-05-10T10:00:00"),
-    endDate: new Date("2025-05-10T16:00:00"),
-    capacity: 200,
-    registrationDeadline: new Date("2025-05-05T23:59:59"),
-    virtualPlatformLink: "https://zoom.us/marketing-workshop",
-    isFree: false,
-    price: 49.99,
-    agenda:
-      "10:00 AM - 11:30 AM: SEO Fundamentals\n\n12:00 PM - 1:30 PM: Social Media Strategy\n\n2:00 PM - 3:30 PM: Content Marketing\n\n3:30 PM - 4:00 PM: Q&A Session",
-    organizers: [
-      {
-        id: "org2",
-        email: "digitalmarketing@example.com",
-        password: "",
-        phoneNumber: "415-555-6789",
-        profileImage:
-          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-        userType: "organization",
-        points: 0,
-        firstName: "",
-        lastName: "",
-        organizationName: "Digital Marketing Experts",
-        organizationAddress: "456 Market Street, San Francisco, CA 94103",
-        is_site_admin: false,
-      },
-    ],
-    sponsors: [],
-    speakers: [
-      {
-        id: "speak3",
-        email: "sarah.johnson@example.com",
-        password: "",
-        phoneNumber: "415-555-8765",
-        profileImage:
-          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-        userType: "individual",
-        profession: "Marketing Director",
-        points: 0,
-        firstName: "Sarah",
-        lastName: "Johnson",
-        affiliation: "Marketing Innovations Ltd.",
-        organizationName: "",
-        organizationAddress: "",
-        is_site_admin: false,
-      },
-    ],
-    attendees: [],
-    stakeholders: [],
-    eventAdmin: {
-      id: "admin2",
-      email: "marketing.admin@example.com",
-      password: "",
-      phoneNumber: "415-555-7890",
-      profileImage:
-        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-      userType: "individual",
-      points: 0,
-      firstName: "Marketing",
-      lastName: "Admin",
-      organizationName: "",
-      organizationAddress: "",
-      is_site_admin: false,
-    },
-  },
-  {
-    id: "3",
-    name: "Next.js Upcoming Release",
-    description:
-      "Connect with professionals in your area. Discuss the features of the new release",
-    format: EVENT_FORMAT.PERSON,
-    tags: ["Release", "Framework", "JavaScript"],
-    bannerImage:
-      "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1567&q=80",
-    startDate: new Date("2025-06-05T18:00:00"),
-    endDate: new Date("2025-06-05T20:00:00"),
-    capacity: 50,
-    address: "The Business Hub, 789 Oak Street, San Francisco, CA 94107",
-    isFree: true,
-    price: 0,
-    agenda:
-      "6:00 PM - 6:30 PM: Check-in and refreshments\n\n6:30 PM - 7:30 PM: Structured networking\n\n7:30 PM - 8:00 PM: Open networking",
-    organizers: [
-      {
-        id: "org3",
-        email: "businessnetwork@example.com",
-        password: "",
-        phoneNumber: "415-555-3456",
-        userType: "organization",
-        points: 0,
-        firstName: "",
-        lastName: "",
-        organizationName: "SF Business Network",
-        organizationAddress: "789 Oak Street, San Francisco, CA 94107",
-        is_site_admin: false,
-      },
-    ],
-    sponsors: [],
-    speakers: [],
-    attendees: [],
-    stakeholders: [],
-    eventAdmin: {
-      id: "admin3",
-      email: "network.admin@example.com",
-      password: "",
-      phoneNumber: "415-555-6543",
-      userType: "individual",
-      points: 0,
-      firstName: "Network",
-      lastName: "Coordinator",
-      organizationName: "",
-      organizationAddress: "",
-      is_site_admin: false,
-    },
-  },
+  // ...additional mock events
 ];
 
 // Define the shape of our context
@@ -232,6 +112,7 @@ interface EventContextType {
   error: string | null;
   fetchEvents: () => Promise<void>;
   getEventById: (id: string) => Event | undefined;
+  updateEvent: (id: string, updatedEvent: Event) => Promise<void>;
 }
 
 // Create the context with default values
@@ -243,6 +124,7 @@ const EventContext = createContext<EventContextType>({
   error: null,
   fetchEvents: async () => {},
   getEventById: () => undefined,
+  updateEvent: async () => {},
 });
 
 // Provider component
@@ -265,11 +147,6 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
       setLoading(true);
       setError(null);
 
-      // In a real implementation, this would be an API call
-      // const response = await fetch('/api/events');
-      // const data = await response.json();
-
-      // Using mock data for now
       // Simulate network delay
       await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -287,12 +164,37 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
     return events.find((event) => event.id === id);
   };
 
+  // Update event function that calls the backend PATCH endpoint
+  const updateEvent = async (id: string, updatedEvent: Event): Promise<void> => {
+    try {
+      const response = await fetch(`/events/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedEvent),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update event");
+      }
+      const updatedEventFromServer: Event = await response.json();
+      // Update local state with the updated event
+      setEvents((prevEvents) =>
+        prevEvents.map((event) =>
+          event.id === id ? updatedEventFromServer : event
+        )
+      );
+    } catch (err) {
+      console.error("Error updating event:", err);
+      throw err;
+    }
+  };
+
   // Initial fetch on mount
   useEffect(() => {
     fetchEvents();
   }, []);
 
-  // The context value that will be provided
   const contextValue: EventContextType = {
     events,
     allTags,
@@ -301,6 +203,7 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
     error,
     fetchEvents,
     getEventById,
+    updateEvent,
   };
 
   return (

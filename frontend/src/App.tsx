@@ -26,10 +26,10 @@ function App() {
               <Route path="/det/:id" element={<EventDet />} />
               <Route path="/myevents" element={<MyCreatedEvents />} />
               <Route path="/createevent" element={<CreateEventPage />} />
-              {/* <Route
+              <Route
               path="/createevent/:eventId"
               element={<CreateEvent mode="edit" />}
-            />{" "} */}
+              />
             </Routes>
           </Router>
         </EventProvider>
