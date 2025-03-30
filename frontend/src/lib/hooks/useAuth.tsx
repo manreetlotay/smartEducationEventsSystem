@@ -120,18 +120,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true);
 
       console.log("Signing in with:", { email });
+      const formData = new URLSearchParams();
+      formData.append("username", email);
+      formData.append("password", password);
 
       // The FastAPI login endpoint expects JSON data with email and password
       // This matches your LoginForm model in forms/auth.py
       const response = await fetch(`${API_BASE_URL}/token`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: JSON.stringify({
-          username: email,
-          password: password,
-        }),
+        body: formData,
       });
 
       if (!response.ok) {
