@@ -29,6 +29,13 @@ def read_users(
     users = session.exec(select(DbUser).offset(offset).limit(limit)).all()
     return users
 
+@router.get("/search/{email}", response_model=UserPublic)
+def search_user(email: str, session: SessionDep):
+    user = session.exec(select(DbUser).where(DbUser.email == email)).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
 
 @router.get("/me", response_model=UserPublic)
 async def read_user_me(
