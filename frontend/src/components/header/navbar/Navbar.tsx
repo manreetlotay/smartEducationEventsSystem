@@ -23,6 +23,7 @@ import {
   ClipboardDocumentIcon,
   CalendarIcon,
 } from "@heroicons/react/20/solid";
+import { useAuth } from "../../../lib/hooks/useAuth";
 
 const actionItems = [
   {
@@ -52,9 +53,7 @@ const callsToActionWhenUser = [
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // This will be fetched from the database later
-  const [userPoints, setUserPoints] = useState(750);
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Temporary state for demo
+  const { user } = useAuth();
 
   // Custom coin SVG icon for the points display
   const CoinIcon = () => (
@@ -108,18 +107,18 @@ export default function Navbar() {
         </PopoverGroup>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:items-center">
           {/* Points display */}
-          {isLoggedIn && (
+          {user && (
             <div className="flex items-center mr-6 px-3 py-1.5 rounded-full h-8">
               <CoinIcon />
               <span className="ml-1.5 text-sm font-semibold text-gray-700">
-                {userPoints} points
+                {user.points} points
               </span>
             </div>
           )}
 
           <Popover className="relative">
             <PopoverButton className="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
-              Account
+              {user ? user.email : "Account"}
               <ChevronDownIcon
                 aria-hidden="true"
                 className="size-5 flex-none text-gray-400"
@@ -128,9 +127,9 @@ export default function Navbar() {
 
             <PopoverPanel
               transition
-              className="absolute top-full -left-45 z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white ring-1 shadow-lg ring-gray-900/5 transition data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
+              className="absolute top-full -left-60 z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white ring-1 shadow-lg ring-gray-900/5 transition data-closed:translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
             >
-              {isLoggedIn && (
+              {user && (
                 <div className="p-4 bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-gray-100">
                   <div className="flex items-center">
                     <div className="flex items-center justify-center bg-white p-2 rounded-full shadow-sm">
@@ -141,7 +140,7 @@ export default function Navbar() {
                         Create Events. Unlock the Golden Access Pass!
                       </p>
                       <p className="text-xl font-bold text-gray-900">
-                        {userPoints}
+                        {user.points} points
                       </p>
                     </div>
                   </div>
@@ -179,7 +178,7 @@ export default function Navbar() {
                 ))}
               </div>
               <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
-                {isLoggedIn
+                {user
                   ? callsToActionWhenUser.map((item) => (
                       <a
                         key={item.name}
@@ -238,18 +237,18 @@ export default function Navbar() {
           </div>
           <div className="mt-6 flow-root">
             <div className=" divide-y divide-gray-500/10">
-              {isLoggedIn && (
+              {user && (
                 <div className="py-3 px-3 rounded-lg mt-5 flex items-center">
                   <CoinIcon />
                   <span className="ml-2 text-sm font-semibold text-gray-700">
-                    {userPoints} points
+                    {user.points} points
                   </span>
                 </div>
               )}
               <div className="space-y-2">
                 <Disclosure as="div" className="-mx-3">
                   <DisclosureButton className="group flex w-full items-center justify-between rounded-lg py-2 pr-3.5 pl-3 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
-                    Account
+                    {user ? user.email : "Account"}
                     <ChevronDownIcon
                       aria-hidden="true"
                       className="size-5 flex-none group-data-open:rotate-180"
@@ -258,7 +257,7 @@ export default function Navbar() {
                   <DisclosurePanel className="mt-2 space-y-2">
                     {[
                       ...actionItems,
-                      ...(isLoggedIn
+                      ...(user
                         ? callsToActionWhenUser
                         : callsToActionWhenNoUser),
                     ].map((item) => (
