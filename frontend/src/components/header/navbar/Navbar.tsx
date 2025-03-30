@@ -47,7 +47,7 @@ const callsToActionWhenNoUser = [
 
 // callsToAction for no logged in user
 const callsToActionWhenUser = [
-  { name: "Sign Out", href: "/signout", icon: ArrowRightEndOnRectangleIcon },
+  { name: "Sign Out", href: "/", icon: ArrowRightEndOnRectangleIcon },
 ];
 
 export default function Navbar() {

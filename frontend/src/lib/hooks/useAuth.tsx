@@ -7,7 +7,6 @@ import {
 } from "../types/Auth";
 import { User } from "../types/User";
 
-// Update this with your actual API URL
 const API_BASE_URL = "http://localhost:8000";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -59,10 +58,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(userData);
           setError(null);
         } else if (response.status === 401) {
-          // Token might be expired, try to refresh
+          // Token might be expired so refresh
           await refreshTokens();
         } else {
-          // Other errors
           setUser(null);
           setTokens(null);
         }
@@ -124,8 +122,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       formData.append("username", email);
       formData.append("password", password);
 
-      // The FastAPI login endpoint expects JSON data with email and password
-      // This matches your LoginForm model in forms/auth.py
       const response = await fetch(`${API_BASE_URL}/token`, {
         method: "POST",
         headers: {
@@ -182,7 +178,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         userType: params.userType,
       });
 
-      // Map our frontend user model to match your backend UserCreate model
       const userCreateData = {
         email: params.email,
         password: params.password,
@@ -218,7 +213,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       console.log("Sending user data:", userCreateData);
 
-      // First, create the user
+      // create the user
       const response = await fetch(`${API_BASE_URL}/users`, {
         method: "POST",
         headers: {
@@ -252,8 +247,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userData = await response.json();
       console.log("User created successfully:", userData);
 
-      // After creating the user, sign in with the new credentials
-      await signIn(params.email, params.password);
+      // await signIn(params.email, params.password);
     } catch (error) {
       setError((error as Error).message);
       console.error("Failed to sign up:", error);
@@ -264,8 +258,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      // Your backend doesn't seem to have a signout endpoint
-      // so we'll just remove tokens locally
+      //remove tokens locally
       setUser(null);
       setTokens(null);
       setError(null);

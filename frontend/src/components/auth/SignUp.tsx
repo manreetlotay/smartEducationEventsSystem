@@ -66,7 +66,7 @@ export default function SignUp() {
       }
 
       // If successful, navigate to home or dashboard
-      navigate("/");
+      navigate("/signin");
     } catch (error) {
       console.error("Sign up error:", error);
     }
