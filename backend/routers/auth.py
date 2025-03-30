@@ -9,7 +9,6 @@ from forms.auth import LoginForm
 
 router = APIRouter(prefix="/token", tags=["Authentication"])
 
-
 @router.post("/")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
