@@ -8,12 +8,14 @@ import PaymentSuccess from "../../payment/PaymentSuccess";
 import { useEventContext } from "../../../lib/context/EventContext";
 import { PencilIcon } from "@heroicons/react/20/solid";
 import { Instagram, Facebook, Linkedin } from "lucide-react";
+import { useAuth } from "../../../lib/hooks/useAuth";
 
 const EventDetail: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const { getEventById, fetchEvents } = useEventContext();
+  const { user } = useAuth();
 
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -21,8 +23,8 @@ const EventDetail: React.FC = () => {
   const [showPaymentPage, setShowPaymentPage] = useState(false);
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
 
-  // Check if current user is the admin of this event (admin1 is replaced with id of current logged in user)
-  const isEventAdmin = event && event.eventAdmin.id === "admin1";
+  // Check if current user is the admin of this event
+  const isEventAdmin = event && event.eventAdmin.id === user?.id;
 
   // Handle edit button click
   const handleEditClick = () => {
