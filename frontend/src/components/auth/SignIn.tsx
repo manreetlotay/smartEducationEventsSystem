@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../lib/hooks/useAuth";
 
 export default function SignIn() {
   const navigate = useNavigate();
-  const { signIn, error: authError, isLoading } = useAuth();
+  const { signIn, error: authError, isLoading, user } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,9 +26,7 @@ export default function SignIn() {
       // Call signIn from useAuth hook
       await signIn(email, password);
 
-      // If signIn is successful (no error), navigate to home page
       if (!authError) {
-        console.log("Sign in successful, navigating to home");
         navigate("/");
       }
     } catch (error) {
@@ -40,7 +38,7 @@ export default function SignIn() {
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
+          <h2 className="mt-25 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
             Sign in to your account
           </h2>
         </div>

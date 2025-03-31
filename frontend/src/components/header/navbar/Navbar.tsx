@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, MouseEvent } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -46,14 +46,22 @@ const callsToActionWhenNoUser = [
   { name: "Sign up", href: "/signup", icon: UserPlusIcon },
 ];
 
-// callsToAction for no logged in user
-const callsToActionWhenUser = [
-  { name: "Sign Out", href: "/", icon: ArrowRightEndOnRectangleIcon },
-];
-
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+
+  // callsToAction for no logged in user
+  const callsToActionWhenUser = [
+    {
+      name: "Sign Out",
+      href: "/",
+      icon: ArrowRightEndOnRectangleIcon,
+      onClick: async (e: MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        await signOut();
+      },
+    },
+  ];
 
   // Custom coin SVG icon for the points display
   const CoinIcon = () => (
@@ -183,6 +191,7 @@ export default function Navbar() {
                       <a
                         key={item.name}
                         href={item.href}
+                        onClick={item.onClick}
                         className="flex items-center justify-center gap-x-2.5 p-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-100"
                       >
                         <item.icon

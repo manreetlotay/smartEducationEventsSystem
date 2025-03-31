@@ -17,18 +17,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Initialize auth state from localStorage
+  // Initialize auth state from localStorage (first mount)
   useEffect(() => {
-    const savedTokens = localStorage.getItem("auth_tokens");
-    if (savedTokens) {
-      try {
-        setTokens(JSON.parse(savedTokens));
-      } catch (error) {
-        console.error("Failed to parse saved tokens:", error);
-        localStorage.removeItem("auth_tokens");
+    const initAuth = async () => {
+      const savedTokens = localStorage.getItem("auth_tokens");
+
+      if (savedTokens) {
+        try {
+          const parsedTokens = JSON.parse(savedTokens);
+          setTokens(parsedTokens);
+
+          // Pass the parsed tokens directly to checkAuth instead of relying on state
+          await checkAuth(parsedTokens);
+        } catch (error) {
+          console.error("Failed to parse saved tokens:", error);
+          localStorage.removeItem("auth_tokens");
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
       }
-    }
-    checkAuth();
+    };
+
+    initAuth();
   }, []);
 
   // Save tokens to localStorage when they change
@@ -41,15 +52,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [tokens]);
 
   // Check if the user is currently authenticated
-  const checkAuth = async () => {
+  const checkAuth = async (tokensToUse = tokens) => {
     try {
       setIsLoading(true);
 
       // If we have tokens, try to get the user profile
-      if (tokens?.accessToken) {
+      if (tokensToUse?.accessToken) {
         const response = await fetch(`${API_BASE_URL}/users/me`, {
           headers: {
-            Authorization: `Bearer ${tokens.accessToken}`,
+            Authorization: `Bearer ${tokensToUse.accessToken}`,
           },
         });
 
@@ -58,8 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(userData);
           setError(null);
         } else if (response.status === 401) {
-          // Token might be expired so refresh
-          await refreshTokens();
+          await refreshTokens(tokensToUse);
         } else {
           setUser(null);
           setTokens(null);
@@ -77,8 +87,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Try to refresh the token
-  const refreshTokens = async () => {
-    if (!tokens?.refreshToken) return;
+  const refreshTokens = async (tokensToUse = tokens) => {
+    if (!tokensToUse?.refreshToken) return;
 
     try {
       const response = await fetch(`${API_BASE_URL}/token/refresh`, {
@@ -86,7 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ refresh_token: tokens.refreshToken }),
+        body: JSON.stringify({ refresh_token: tokensToUse.refreshToken }),
       });
 
       if (response.ok) {
@@ -99,7 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setTokens(newTokens);
 
         // Now fetch the user data with the new token
-        await checkAuth();
+        await checkAuth(newTokens);
       } else {
         // If refresh fails, log the user out
         setUser(null);
@@ -117,7 +127,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setError(null);
       setIsLoading(true);
 
-      console.log("Signing in with:", { email });
       const formData = new URLSearchParams();
       formData.append("username", email);
       formData.append("password", password);
@@ -146,7 +155,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       const data = await response.json();
-      console.log("Sign in successful, got tokens");
 
       const newTokens = {
         accessToken: data.access_token,
@@ -156,8 +164,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setTokens(newTokens);
 
-      // After successful login, fetch the user data
-      await checkAuth();
+      // After successful login, fetch the user data with the new tokens
+      await checkAuth(newTokens);
     } catch (error) {
       setError((error as Error).message);
       console.error("Failed to sign in:", error);
@@ -246,8 +254,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const userData = await response.json();
       console.log("User created successfully:", userData);
-
-      // await signIn(params.email, params.password);
     } catch (error) {
       setError((error as Error).message);
       console.error("Failed to sign up:", error);
@@ -258,6 +264,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
+      localStorage.removeItem("auth_tokens");
+
       //remove tokens locally
       setUser(null);
       setTokens(null);

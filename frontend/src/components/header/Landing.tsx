@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import bg from "../../assets/images/homeBg.jpg";
 import Footer from "../footer/Footer";
+import { useAuth } from "../../lib/hooks/useAuth";
 
 const stats = [
   { name: "Events hosted", value: "1,200+ " },
@@ -13,6 +14,7 @@ const stats = [
 export default function Landing() {
   const [rating, setRating] = useState<number>(0);
   const [hoverRating, setHoverRating] = useState<number>(0);
+  const { user } = useAuth();
 
   const renderStar = (starNumber: number, currentValue: number) => {
     if (currentValue >= starNumber) {
@@ -83,18 +85,20 @@ export default function Landing() {
               </dl>
             </div>
           </div>
-          <Link to="/signIn">
-            {/*Sign Up Button*/}
-            <button
-              type="button"
-              className="absolute bottom-8 right-8 bg-blue-500 text-white px-8 py-3 rounded-full shadow hover:bg-blue-600 transition duration-300 group"
-            >
-              Join now
-              <span className="inline-block ml-2 transform transition duration-300 group-hover:translate-x-2">
-                →
-              </span>
-            </button>
-          </Link>
+          {!user && (
+            <Link to="/signIn">
+              {/*Sign Up Button*/}
+              <button
+                type="button"
+                className="absolute bottom-8 right-8 bg-blue-500 text-white px-8 py-3 rounded-full shadow hover:bg-blue-600 transition duration-300 group"
+              >
+                Join now
+                <span className="inline-block ml-2 transform transition duration-300 group-hover:translate-x-2">
+                  →
+                </span>
+              </button>
+            </Link>
+          )}
         </div>
 
         {/*Review Section*/}

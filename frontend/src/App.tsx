@@ -10,6 +10,7 @@ import MyCreatedEvents from "./views/MyCreatedEvents";
 import CreateEventPage from "./views/CreateEventPage";
 import CreateEvent from "./components/events/eventPlanning/CreateEvent";
 import { AuthProvider } from "./lib/hooks/useAuth";
+import Navbar from "./components/header/navbar/Navbar";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <AuthProvider>
         <EventProvider>
           <Router>
+            <Navbar />
             <Routes>
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />
@@ -27,8 +29,8 @@ function App() {
               <Route path="/myevents" element={<MyCreatedEvents />} />
               <Route path="/createevent" element={<CreateEventPage />} />
               <Route
-              path="/createevent/:eventId"
-              element={<CreateEvent mode="edit" />}
+                path="/createevent/:eventId"
+                element={<CreateEvent mode="edit" />}
               />
             </Routes>
           </Router>
