@@ -11,6 +11,7 @@ import CreateEventPage from "./views/CreateEventPage";
 import CreateEvent from "./components/events/eventPlanning/CreateEvent";
 import { AuthProvider } from "./lib/hooks/useAuth";
 import Navbar from "./components/header/navbar/Navbar";
+import TicketsPage from "./components/ticket/TicketsPage";
 
 function App() {
   return (
@@ -31,6 +32,15 @@ function App() {
               <Route
                 path="/createevent/:eventId"
                 element={<CreateEvent mode="edit" />}
+              />
+              <Route
+                path="/myticket"
+                element={
+                  <>
+                    <TicketsPage />
+                    <Footer />
+                  </>
+                }
               />
             </Routes>
           </Router>
