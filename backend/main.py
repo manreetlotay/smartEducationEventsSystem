@@ -85,7 +85,7 @@ def create_admin():
 def generate_mock_data():
     karl = DbUser(
         email="karl@e.com",
-        hashed_password="",
+        hashed_password=get_password_hash(password="iamkarl"),
         is_site_admin=True,
         phone_number="0000000000",
         first_name="Karl",
@@ -100,7 +100,7 @@ def generate_mock_data():
 
     linda = DbUser(
         email="ilikemoney@e.com",
-        hashed_password="",
+        hashed_password=get_password_hash(password="iamlinda"),
         is_site_admin=True,
         phone_number="0000000001",
         first_name="Linda",
@@ -115,7 +115,7 @@ def generate_mock_data():
 
     rache = DbUser(
         email="rabid@e.com",
-        hashed_password="",
+        hashed_password=get_password_hash(password="iamlrache"),
         is_site_admin=True,
         phone_number="0000000002",
         first_name="Rache",
