@@ -127,8 +127,7 @@ const EventDetail: React.FC = () => {
     }).format(date);
   };
 
-  // Process ticket creation and update user points
-  // Process ticket creation and update user points
+  // Process ticket creation
   const processTicketCreation = async () => {
     if (!event || !user) return;
 
@@ -144,38 +143,8 @@ const EventDetail: React.FC = () => {
         registrationDate: new Date(),
       };
 
-      console.log("Creating ticket with data:", newTicket);
-
-      // 1. Call the createTicket function from TicketContext
       const createdTicket = await createTicket(newTicket);
       console.log("Ticket created successfully:", createdTicket);
-
-      // 2. Update user points
-      try {
-        // Get the current user's points
-        const currentPoints = user.points || 0;
-
-        // Make a PATCH request to update the user's points
-        const response = await fetch(`${API_BASE_URL}/users/me`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            points: currentPoints + 10, // Add 10 points
-          }),
-        });
-
-        if (!response.ok) {
-          // Log the error but don't fail the registration
-          console.error("Failed to update user points:", await response.text());
-        } else {
-          console.log("Successfully added 10 points to user account", response);
-        }
-      } catch (pointsError) {
-        // Log the error but don't fail the registration
-        console.error("Error updating user points:", pointsError);
-      }
 
       // Update registration status
       setIsUserRegistered(true);
@@ -189,39 +158,6 @@ const EventDetail: React.FC = () => {
       setRegistrationLoading(false);
     }
   };
-  // const processTicketCreation = async () => {
-  //   if (!event || !user) return;
-
-  //   try {
-  //     setRegistrationLoading(true);
-  //     setRegistrationError("");
-
-  //     // Create a new ticket for this user and event
-  //     const newTicket = {
-  //       userId: user.id,
-  //       eventId: event.id,
-  //       role: USER_ROLE.ATTENDEE,
-  //       registrationDate: new Date(),
-  //     };
-
-  //     console.log("Creating ticket with data:", newTicket);
-
-  //     // Call the createTicket function from TicketContext
-  //     const createdTicket = await createTicket(newTicket);
-  //     console.log("Ticket created successfully:", createdTicket);
-
-  //     // Update registration status
-  //     setIsUserRegistered(true);
-  //     setShowPaymentSuccess(true);
-  //   } catch (err: any) {
-  //     console.error("Error creating ticket:", err);
-  //     setRegistrationError(
-  //       err.message || "Failed to register for this event. Please try again."
-  //     );
-  //   } finally {
-  //     setRegistrationLoading(false);
-  //   }
-  // };
 
   // Handle initial registration button click
   const registerForEvent = async () => {
