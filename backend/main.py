@@ -83,6 +83,7 @@ def create_admin():
 
 
 def generate_mock_data():
+    create_db_and_tables()
     karl = DbUser(
         email="karl@e.com",
         hashed_password=get_password_hash(password="iamkarl"),
