@@ -71,8 +71,8 @@ export const TicketProvider: React.FC<TicketProviderProps> = ({ children }) => {
       setLoading(true);
       setError(null);
 
-      // Simulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      // // Simulate network delay
+      // await new Promise((resolve) => setTimeout(resolve, 100));
 
       setTickets(mockTickets);
 

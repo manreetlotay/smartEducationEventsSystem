@@ -88,7 +88,7 @@ def generate_mock_data():
         email="karl@e.com",
         hashed_password=get_password_hash(password="iamkarl"),
         is_site_admin=True,
-        phone_number="0000000000",
+        phone_number="438-567-1234",
         first_name="Karl",
         last_name="Franz",
         user_type="individual",
@@ -103,7 +103,7 @@ def generate_mock_data():
         email="ilikemoney@e.com",
         hashed_password=get_password_hash(password="iamlinda"),
         is_site_admin=True,
-        phone_number="0000000001",
+        phone_number="514-890-2345",
         first_name="Linda",
         last_name="Watt",
         user_type="individual",
@@ -118,7 +118,7 @@ def generate_mock_data():
         email="rabid@e.com",
         hashed_password=get_password_hash(password="iamlrache"),
         is_site_admin=True,
-        phone_number="0000000002",
+        phone_number="461-456-1222",
         first_name="Rache",
         last_name="Bartmoss",
         user_type="individual",
@@ -142,6 +142,8 @@ def generate_mock_data():
             DbUser.email == "rabid@e.com")).first()
         linda_db = session.exec(select(DbUser).where(
             DbUser.email == "ilikemoney@e.com")).first()
+        karl_db = session.exec(select(DbUser).where(
+            DbUser.email == "karl@e.com")).first()
         
 
     e1 = DbEvent(
@@ -191,7 +193,7 @@ def generate_mock_data():
         is_free=False,
         price=10,
         agenda="2 hour session to review high school math basics.\n\n Then, we move on to limits.",
-        admin_id=None,
+        admin_id=karl_db.id,
     )
 
     print("Mock event data generated")
@@ -207,13 +209,35 @@ def generate_mock_data():
             DbEvent.admin_id == rache_db.id)).first()
         linda_event = session.exec(select(DbEvent).where(
             DbEvent.admin_id == linda_db.id)).first()
+        karl_event = session.exec(select(DbEvent).where(
+            DbEvent.admin_id == karl_db.id)).first()
 
     rache_admin_ticket = DbTicket(
         user_id=rache_db.id,
         event_id=rache_event.id,
         role="eventAdmin",
         access_code=None,
-        virtual_link=None,
+        virtual_link="https://virtual-conference-platform.com/tech2025",
+        qr_code=None,
+        registration_date=dt.datetime.now() - dt.timedelta(days=10),
+    )
+
+    linda_speaker_ticket = DbTicket(
+        user_id=linda_db.id,
+        event_id=rache_event.id,
+        role="speaker",
+        access_code=None,
+        virtual_link="https://virtual-conference-platform.com/tech2025",
+        qr_code=None,
+        registration_date=dt.datetime.now() - dt.timedelta(days=10),
+    )
+
+    rache_organizer_ticket = DbTicket(
+        user_id=rache_db.id,
+        event_id=rache_event.id,
+        role="organizer",
+        access_code="BEYFNID-45678",
+        virtual_link="https://liquipedia.net/counterstrike/Portal:Tournaments",
         qr_code=None,
         registration_date=dt.datetime.now() - dt.timedelta(days=10),
     )
@@ -222,8 +246,28 @@ def generate_mock_data():
         user_id=linda_db.id,
         event_id=linda_event.id,
         role="eventAdmin",
-        access_code=None,
-        virtual_link="https://liquipedia.net/counterstrike/Portal:Tournaments",
+        access_code="ABXCED-45678",
+        virtual_link=None,
+        qr_code=None,
+        registration_date=dt.datetime.now() - dt.timedelta(days=10),
+    )
+
+    linda_stakeholder_ticket = DbTicket(
+        user_id=linda_db.id,
+        event_id=linda_event.id,
+        role="stakeholder",
+        access_code="ABXCED-45678",
+        virtual_link=None,
+        qr_code=None,
+        registration_date=dt.datetime.now() - dt.timedelta(days=10),
+    )
+
+    linda_sponsor_ticket = DbTicket(
+        user_id=linda_db.id,
+        event_id=karl_event.id,
+        role="sponsor",
+        access_code="ABXCED-45678",
+        virtual_link=None,
         qr_code=None,
         registration_date=dt.datetime.now() - dt.timedelta(days=10),
     )
@@ -232,8 +276,48 @@ def generate_mock_data():
         user_id=rache_db.id,
         event_id=linda_event.id,
         role="attendee",
-        access_code=None,
+        access_code="ABXCED-45678",
+        virtual_link=None,
+        qr_code=None,
+        registration_date=dt.datetime.now() - dt.timedelta(days=10),
+    )
+
+    karl_admin_ticket = DbTicket(
+        user_id=karl_db.id,
+        event_id=karl_event.id,
+        role="eventAdmin",
+        access_code="BEYFNID-45678",
         virtual_link="https://liquipedia.net/counterstrike/Portal:Tournaments",
+        qr_code=None,
+        registration_date=dt.datetime.now() - dt.timedelta(days=10),
+    )
+
+    rache_org_ticket = DbTicket(
+        user_id=rache_db.id,
+        event_id=karl_event.id,
+        role="organizer",
+        access_code="BEYFNID-45678",
+        virtual_link="https://liquipedia.net/counterstrike/Portal:Tournaments",
+        qr_code=None,
+        registration_date=dt.datetime.now() - dt.timedelta(days=10),
+    )
+
+    karl_speaker_ticket = DbTicket(
+        user_id=karl_db.id,
+        event_id=linda_event.id,
+        role="speaker",
+        access_code="ABXCED-45678",
+        virtual_link=None,
+        qr_code=None,
+        registration_date=dt.datetime.now() - dt.timedelta(days=10),
+    )
+
+    karl_organizer_ticket = DbTicket(
+        user_id=karl_db.id,
+        event_id=linda_event.id,
+        role="organizer",
+        access_code="ABXCED-45678",
+        virtual_link=None,
         qr_code=None,
         registration_date=dt.datetime.now() - dt.timedelta(days=10),
     )
@@ -242,6 +326,14 @@ def generate_mock_data():
         session.add(rache_admin_ticket)
         session.add(linda_admin_ticket)
         session.add(rache_csgo_ticket)
+        session.add(karl_admin_ticket)
+        session.add(karl_speaker_ticket)
+        session.add(rache_organizer_ticket)
+        session.add(linda_stakeholder_ticket)
+        session.add(linda_sponsor_ticket)
+        session.add(karl_organizer_ticket)
+        session.add(linda_speaker_ticket)
+        session.add(rache_org_ticket)
         session.commit()
 
     print("Mock ticket data generated")
