@@ -184,6 +184,7 @@ def generate_mock_data():
         name="Learn Calculus I",
         description="Enhance your mathematical skills",
         event_format="online",
+        tags=["Calculus", "Limits", "Math"],
         start_date=dt.datetime.now() + dt.timedelta(days=10),
         end_date=dt.datetime.now() + dt.timedelta(days=12),
         capacity=115,
