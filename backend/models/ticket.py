@@ -23,7 +23,6 @@ class Ticket(TicketBase):
     virtual_link: str | None = Field(default=None)
     qr_code: str | None = Field(default=None)
     registration_date: dt.datetime
-    is_bonus_ticket: bool
 
 
 class DbTicket(Ticket, table=True):
