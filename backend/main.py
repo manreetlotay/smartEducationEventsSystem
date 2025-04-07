@@ -1,10 +1,13 @@
 from contextlib import asynccontextmanager
 import getpass
+from sqlmodel import select
+from models.event import DbEvent
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session
 from db_session import create_db_and_tables, engine
 from auth.auth import get_password_hash
+import datetime as dt
 import sys
 import uvicorn
 
@@ -16,6 +19,7 @@ async def lifespan(app: FastAPI):
     yield
     # Maybe do something here later
 
+from models.ticket import DbTicket
 from models.user import DbUser
 from routers import auth, users, events, tickets
 
@@ -40,7 +44,6 @@ app.add_middleware(
 
 
 def create_admin():
-    username = input("Enter username: ").strip()
     email = input("Enter email: ").strip()
     
     matching = False
@@ -59,7 +62,6 @@ def create_admin():
     hashed_password = get_password_hash(password=password)
     
     admin_user = DbUser(
-        username=username,
         email=email,
         hashed_password=hashed_password,
         is_site_admin=True,
@@ -77,7 +79,174 @@ def create_admin():
     with Session(engine) as session:
         session.add(admin_user)
         session.commit()
-        print(f"Admin user {username} created successfully.")
+        print(f"Admin user {email} created successfully.")
+
+
+def generate_mock_data():
+    karl = DbUser(
+        email="karl@e.com",
+        hashed_password="",
+        is_site_admin=True,
+        phone_number="0000000000",
+        first_name="Karl",
+        last_name="Franz",
+        user_type="individual",
+        points=0,
+        affiliation=None,
+        profession=None,
+        organization_name=None,
+        organization_address=None,
+    )
+
+    linda = DbUser(
+        email="ilikemoney@e.com",
+        hashed_password="",
+        is_site_admin=True,
+        phone_number="0000000001",
+        first_name="Linda",
+        last_name="Watt",
+        user_type="individual",
+        points=6e10,
+        affiliation=None,
+        profession=None,
+        organization_name=None,
+        organization_address=None,
+    )
+
+    rache = DbUser(
+        email="rabid@e.com",
+        hashed_password="",
+        is_site_admin=True,
+        phone_number="0000000002",
+        first_name="Rache",
+        last_name="Bartmoss",
+        user_type="individual",
+        points=300,
+        affiliation=None,
+        profession=None,
+        organization_name=None,
+        organization_address=None,
+    )
+
+    with Session(engine) as session:
+        session.add(karl)
+        session.add(linda)
+        session.add(rache)
+        session.commit()
+
+    print("Mock user data generated")
+
+    with Session(engine) as session:
+        rache_db = session.exec(select(DbUser).where(
+            DbUser.email == "rabid@e.com")).first()
+        linda_db = session.exec(select(DbUser).where(
+            DbUser.email == "ilikemoney@e.com")).first()
+        
+
+    e1 = DbEvent(
+        name="Video Game Night",
+        description="Play video games and make friends.\nThere will be food.",
+        event_format="in-person",
+        start_date=dt.datetime.now() + dt.timedelta(days=30),
+        end_date=dt.datetime.now() + dt.timedelta(days=31),
+        capacity=10,
+        registration_deadline=dt.datetime.now() + dt.timedelta(days=10),
+        address=None,
+        virtual_link=None,
+        is_free=True,
+        price=None,
+        agenda="",
+        admin_id=rache_db.id,
+    )
+
+    e2 = DbEvent(
+        name="Alphabet Cup",
+        description="Competitive Counter-Strike tournament.\nBring your friends.\n$300 priza available.",
+        event_format="online",
+        start_date=dt.datetime.now() + dt.timedelta(days=40),
+        end_date=dt.datetime.now() + dt.timedelta(days=42),
+        capacity=60,
+        registration_deadline=dt.datetime.now() + dt.timedelta(days=300),
+        address=None,
+        virtual_link="https://liquipedia.net/counterstrike/Portal:Tournaments",
+        is_free=False,
+        price=10,
+        agenda="",
+        admin_id=linda_db.id,
+    )
+
+    e3 = DbEvent(
+        name="Camping With Bears",
+        description="Don't feed them.",
+        event_format="in-person",
+        start_date=dt.datetime.now() + dt.timedelta(days=10),
+        end_date=dt.datetime.now() + dt.timedelta(days=12),
+        capacity=15,
+        registration_deadline=dt.datetime.now() + dt.timedelta(days=1),
+        address=None,
+        virtual_link=None,
+        is_free=False,
+        price=0,
+        agenda="",
+        admin_id=None,
+    )
+
+    print("Mock event data generated")
+
+    with Session(engine) as session:
+        session.add(e1)
+        session.add(e2)
+        session.add(e3)
+        session.commit()
+
+    with Session(engine) as session:
+        rache_event = session.exec(select(DbEvent).where(
+            DbEvent.admin_id == rache_db.id)).first()
+        linda_event = session.exec(select(DbEvent).where(
+            DbEvent.admin_id == linda_db.id)).first()
+
+    rache_admin_ticket = DbTicket(
+        user_id=rache_db.id,
+        event_id=rache_event.id,
+        role="eventAdmin",
+        access_code=None,
+        virtual_link=None,
+        qr_code=None,
+        registration_date=dt.datetime.now() - dt.timedelta(days=10),
+        is_bonus_ticket=False,
+    )
+
+    linda_admin_ticket = DbTicket(
+        user_id=linda_db.id,
+        event_id=linda_event.id,
+        role="eventAdmin",
+        access_code=None,
+        virtual_link="https://liquipedia.net/counterstrike/Portal:Tournaments",
+        qr_code=None,
+        registration_date=dt.datetime.now() - dt.timedelta(days=10),
+        is_bonus_ticket=False,
+    )
+
+    rache_csgo_ticket = DbTicket(
+        user_id=rache_db.id,
+        event_id=linda_event.id,
+        role="attendee",
+        access_code=None,
+        virtual_link="https://liquipedia.net/counterstrike/Portal:Tournaments",
+        qr_code=None,
+        registration_date=dt.datetime.now() - dt.timedelta(days=10),
+        is_bonus_ticket=False,
+    )
+
+    with Session(engine) as session:
+        session.add(rache_admin_ticket)
+        session.add(linda_admin_ticket)
+        session.add(rache_csgo_ticket)
+        session.commit()
+
+    print("Mock ticket data generated")
+        
+
 
 
 @app.get("/")
@@ -89,5 +258,7 @@ if __name__ == "__main__":
 
     if 'create_admin' in args:
         create_admin()
+    elif 'generate_mock_data' in args:
+        generate_mock_data()
     else:
         uvicorn.run(app, host="localhost", port=8000)

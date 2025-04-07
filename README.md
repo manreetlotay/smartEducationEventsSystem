@@ -78,6 +78,13 @@ Ensure you have the following installed:
 
    ```
 
+7. Create Mock Data (Optional)
+
+   ```sh
+   python main.py generate_mock_data
+
+   ```
+
 ## Important step to ensure efficient dependency management
 
 Make sure to append (not overwrite) the server/requirements.txt file with the dependencies. Rule of thumb to follow:
