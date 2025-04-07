@@ -9,20 +9,24 @@ interface PaymentPageProps {
   eventName: string;
   eventPrice: number;
   onCancel: () => void;
+  onSuccess?: () => void;
 }
 
 const PaymentPage: React.FC<PaymentPageProps> = ({
   eventName,
   eventPrice,
   onCancel,
+  onSuccess,
 }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-  
+
   const [paymentMethod, setPaymentMethod] = useState<string>("credit-card");
   const [isPaymentComplete, setIsPaymentComplete] = useState<boolean>(false);
   const [showSuccessModal, setShowSuccessModal] = useState<boolean>(false);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [paymentError, setPaymentError] = useState<string>("");
 
   const handlePaymentMethodChange = (method: string) => {
     setPaymentMethod(method);
@@ -36,13 +40,31 @@ const PaymentPage: React.FC<PaymentPageProps> = ({
   };
 
   const handlePaymentSubmit = (formData: any) => {
+    // Reset error state
+    setPaymentError("");
+    setIsProcessing(true);
+
     // In a real app, you would process the payment here
     console.log("Processing payment with:", paymentMethod, formData);
 
     // Simulate payment processing
     setTimeout(() => {
-      setIsPaymentComplete(true);
-      setShowSuccessModal(true);
+      try {
+        // Payment successful
+        setIsPaymentComplete(true);
+        setShowSuccessModal(true);
+
+        // Call the onSuccess callback if provided
+        if (onSuccess) {
+          onSuccess();
+        }
+      } catch (error) {
+        // Handle payment failure
+        setPaymentError("Payment processing failed. Please try again.");
+        console.error("Payment failed:", error);
+      } finally {
+        setIsProcessing(false);
+      }
     }, 1000);
   };
 
@@ -88,7 +110,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({
         ) : (
           <PaymentSuccess
             eventName={eventName}
-            onClose={() => handleClose}
+            onClose={handleClose}
             isVisible={showSuccessModal}
           />
         )}

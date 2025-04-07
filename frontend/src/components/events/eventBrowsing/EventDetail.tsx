@@ -9,6 +9,8 @@ import { useEventContext } from "../../../lib/context/EventContext";
 import { PencilIcon } from "@heroicons/react/20/solid";
 import { Instagram, Facebook, Linkedin } from "lucide-react";
 import { useAuth } from "../../../lib/hooks/useAuth";
+import { useTickets } from "../../../lib/context/TicketContext";
+import { USER_ROLE } from "../../../lib/types/Ticket";
 
 const EventDetail: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -16,12 +18,15 @@ const EventDetail: React.FC = () => {
   const location = useLocation();
   const { getEventById, fetchEvents } = useEventContext();
   const { user } = useAuth();
+  const { createTicket } = useTickets();
 
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState("");
   const [showPaymentPage, setShowPaymentPage] = useState(false);
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
+  const [registrationLoading, setRegistrationLoading] = useState(false);
+  const [registrationError, setRegistrationError] = useState("");
 
   // Check if current user is the admin of this event
   const isEventAdmin =
@@ -86,18 +91,91 @@ const EventDetail: React.FC = () => {
     }).format(date);
   };
 
-  const registerForEvent = () => {
-    if (!event) return;
+  // const registerForEvent = () => {
+  //   if (!event) return;
+  //   if (event.isFree) {
+  //     // Handle free registration logic
+  //     console.log("Processing free registration");
+  //     setShowPaymentSuccess(true);
+  //     // Perhaps redirect to a confirmation page
+  //     // navigate(`/events/${eventId}/registered`);
+  //   } else {
+  //     // For paid events, show the payment page
+  //     setShowPaymentPage(true);
+  //   }
+  // };
 
-    if (event.isFree) {
-      // Handle free registration logic
-      console.log("Processing free registration");
+  // Process ticket creation
+  const processTicketCreation = async () => {
+    if (!event || !user) return;
+
+    try {
+      setRegistrationLoading(true);
+      setRegistrationError("");
+
+      // Create a new ticket for this user and event
+      const newTicket = {
+        userId: user.id,
+        eventId: event.id,
+        role: USER_ROLE.ATTENDEE,
+        registrationDate: new Date(),
+      };
+
+      console.log("Creating ticket with data:", newTicket);
+
+      // Call the createTicket function from TicketContext
+      const createdTicket = await createTicket(newTicket);
+      console.log("Ticket created successfully:", createdTicket);
+
       setShowPaymentSuccess(true);
-      // Perhaps redirect to a confirmation page
-      // navigate(`/events/${eventId}/registered`);
-    } else {
-      // For paid events, show the payment page
-      setShowPaymentPage(true);
+    } catch (err: any) {
+      console.error("Error creating ticket:", err);
+      setRegistrationError(
+        err.message || "Failed to register for this event. Please try again."
+      );
+    } finally {
+      setRegistrationLoading(false);
+    }
+  };
+
+  // Handle initial registration button click
+  const registerForEvent = async () => {
+    if (!event) return;
+    if (!user) {
+      // Redirect to login if user is not authenticated
+      navigate("/login", { state: { redirect: `/det/${eventId}` } });
+      return;
+    }
+
+    try {
+      if (event.isFree) {
+        // For free events, create the ticket immediately
+        await processTicketCreation();
+      } else {
+        // For paid events, show the payment page first
+        console.log("Showing payment page for paid event");
+        setShowPaymentPage(true);
+      }
+    } catch (err: any) {
+      console.error("Error during registration process:", err);
+      setRegistrationError(
+        err.message || "Failed to register for this event. Please try again."
+      );
+    }
+  };
+
+  // Handle successful payment (for paid events)
+  const handlePaymentSuccess = async () => {
+    // Only create the ticket after successful payment
+    try {
+      await processTicketCreation();
+      setShowPaymentPage(false);
+    } catch (err: any) {
+      console.error("Error after payment:", err);
+      setRegistrationError(
+        err.message ||
+          "Payment was successful, but we couldn't complete registration. Please contact support."
+      );
     }
   };
 
@@ -163,6 +241,7 @@ const EventDetail: React.FC = () => {
         eventName={event.name}
         eventPrice={event.price || 0}
         onCancel={() => setShowPaymentPage(false)}
+        onSuccess={handlePaymentSuccess}
       />
     );
   }

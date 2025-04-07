@@ -16,6 +16,7 @@ interface TicketContextType {
   error: string | null;
   fetchTickets: () => Promise<void>;
   refreshTickets: () => Promise<void>;
+  createTicket: (newTicket: Omit<Ticket, "ticketId">) => Promise<Ticket>;
 }
 
 // mock tickets
@@ -68,7 +69,9 @@ const mapBackendTicketToFrontend = (backendTicket: any): Ticket => {
   };
 };
 
-const mapFrontendTicketToBackend = (frontendTicket: Ticket): any => {
+const mapFrontendTicketToBackend = (
+  frontendTicket: Omit<Ticket, "ticketId">
+): any => {
   return {
     user_id: parseInt(frontendTicket.userId),
     event_id: parseInt(frontendTicket.eventId),
@@ -123,6 +126,62 @@ export const TicketProvider: React.FC<TicketProviderProps> = ({ children }) => {
     }
   };
 
+  // Function to create a new ticket
+  const createTicket = async (
+    newTicket: Omit<Ticket, "ticketId">
+  ): Promise<Ticket> => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Convert the ticket to backend format
+      const backendTicket = mapFrontendTicketToBackend(newTicket);
+
+      console.log("Creating new ticket:", backendTicket);
+
+      const response = await fetch(`${API_BASE_URL}/tickets`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(backendTicket),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Failed to create ticket:", response.status, errorText);
+        throw new Error(`Failed to create ticket: ${response.status}`);
+      }
+
+      // Parse the response to get the created ticket
+      const createdTicketData = await response.json();
+      const createdTicket = mapBackendTicketToFrontend(createdTicketData);
+
+      console.log("Ticket created successfully:", createdTicket);
+
+      // Add the new ticket to the current state
+      setTickets((prevTickets) => [...prevTickets, createdTicket]);
+
+      // If the ticket belongs to the current user, add it to userTickets as well
+      if (user && String(createdTicket.userId) === String(user.id)) {
+        setUserTickets((prevUserTickets) => [
+          ...prevUserTickets,
+          createdTicket,
+        ]);
+      }
+
+      return createdTicket;
+    } catch (err: any) {
+      const errorMessage =
+        err.message || "Failed to create ticket. Please try again.";
+      setError(errorMessage);
+      console.error("Error creating ticket:", err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Function to refresh tickets (can be called after creating new tickets, etc.)
   const refreshTickets = async () => {
     await fetchTickets();
@@ -141,6 +200,7 @@ export const TicketProvider: React.FC<TicketProviderProps> = ({ children }) => {
     error,
     fetchTickets,
     refreshTickets,
+    createTicket,
   };
 
   return (
