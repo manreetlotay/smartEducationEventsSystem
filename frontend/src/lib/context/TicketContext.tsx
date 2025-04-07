@@ -112,13 +112,6 @@ export const TicketProvider: React.FC<TicketProviderProps> = ({ children }) => {
         );
         console.log("filtered tickets: ", filteredTickets);
         setUserTickets(filteredTickets);
-        console.log(
-          "user's id and all tickets",
-          user.id,
-          "and ticekts",
-          tickets
-        );
-        console.log("after setting user tickets", userTickets);
       } else {
         setUserTickets([]);
       }

@@ -5,23 +5,28 @@ import EventCard from "../eventBrowsing/EventCard";
 import { useEventContext } from "../../../lib/context/EventContext";
 import { PencilSquareIcon } from "@heroicons/react/20/solid";
 import Footer from "../../footer/Footer";
+import { useAuth } from "../../../lib/hooks/useAuth";
 
 const MyEventsPage: React.FC = () => {
   const navigate = useNavigate();
   const { events, loading: contextLoading } = useEventContext();
   const [myEvents, setMyEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
-  // For testing, assume the logged-in user is admin1
-  const currentUserId = "admin1";
+  const currentUserId = user?.id;
 
   // Filter events where the current user is the admin
   useEffect(() => {
-    if (events.length > 0) {
+    if (events.length > 0 && user) {
       const filteredEvents = events.filter(
-        (event) => event.eventAdmin.id === currentUserId
+        (event) => String(event.eventAdmin.id) === String(currentUserId)
       );
       setMyEvents(filteredEvents);
+      console.log(
+        "filtered events those that linda is admin of",
+        filteredEvents
+      );
       setLoading(false);
     } else if (!contextLoading) {
       // If context finished loading but no events found
