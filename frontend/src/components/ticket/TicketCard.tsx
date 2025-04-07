@@ -39,24 +39,22 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket, eventName }) => {
       <div className="p-4">
         {/* Role badge */}
         <div className="flex justify-between items-center mb-3">
-          <span
-            className={`text-xs uppercase font-bold px-2 py-1 rounded-full ${
-              roleColors[ticket.role]
-            }`}
-          >
-            {ticket.role}
-          </span>
-          {/* {ticket.isBonusTicket && (
-            <span className="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full">
-              Bonus Ticket
+          <div className="flex items-center">
+            <span className="text-sm text-gray-500 mr-2">Attending as:</span>
+            <span
+              className={`text-xs uppercase font-bold px-2 py-1 rounded-full ${
+                roleColors[ticket.role]
+              }`}
+            >
+              {ticket.role}
             </span>
-          )} */}
+          </div>
         </div>
 
         {/* Ticket details */}
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-gray-500">Registration:</span>
+            <span className="text-gray-500">Registration Date:</span>
             <span className="font-medium">
               {formatDate(ticket.registrationDate)}
             </span>

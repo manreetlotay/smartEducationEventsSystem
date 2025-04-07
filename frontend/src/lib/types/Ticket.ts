@@ -19,6 +19,6 @@ export enum USER_ROLE {
   EVENT_ADMIN = "eventAdmin",
 }
 
-export interface BonusTicketCardProps {
+export interface BonusTicket {
   accessCode: string;
 }

@@ -1,90 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Ticket, USER_ROLE } from "../../lib/types/Ticket";
 import { useEventContext } from "../../lib/context/EventContext";
 import { TicketIcon } from "@heroicons/react/20/solid";
 import TicketCard from "./TicketCard";
 import BonusTicketCard from "./BonusTicketCard";
 import { useAuth } from "../../lib/hooks/useAuth";
+import { useTickets } from "../../lib/context/TicketContext";
 
-const MyTicketsPage: React.FC = () => {
+const TicketsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { events, loading: contextLoading } = useEventContext();
-  const [myTickets, setMyTickets] = useState<
-    Array<Ticket & { eventName: string }>
-  >([]);
-  const [loading, setLoading] = useState(true);
-
+  const { events } = useEventContext();
+  const { userTickets, loading: ticketsLoading } = useTickets();
   const { user } = useAuth();
-  const currentUserId = "id";
-
-  // Fetch tickets for the current user
-  useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        // This would typically be an API call to get the user's tickets
-        // For now, we'll use mock data
-        const mockTickets: Ticket[] = [
-          {
-            ticketId: "ticket123456",
-            userId: currentUserId,
-            eventId: "1",
-            role: USER_ROLE.ATTENDEE,
-            qrCode: "qr-code-data",
-            registrationDate: new Date("2025-03-15"),
-          },
-          {
-            ticketId: "ticket789012",
-            userId: currentUserId,
-            eventId: "2",
-            role: USER_ROLE.SPEAKER,
-            accessCode: "SPEAKER2025",
-            virtualLink: "https://virtual-event.example.com/join",
-            registrationDate: new Date("2025-03-20"),
-          },
-          {
-            ticketId: "ticket345678",
-            userId: currentUserId,
-            eventId: "event3",
-            role: USER_ROLE.SPONSOR,
-            qrCode: "qr-code-data-2",
-            registrationDate: new Date("2025-04-01"),
-          },
-        ];
-
-        // Add event names to tickets by looking up events
-        if (events.length > 0) {
-          const ticketsWithEventNames = mockTickets.map((ticket) => {
-            const event = events.find((e) => e.id === ticket.eventId);
-            return {
-              ...ticket,
-              eventName: event ? event.name : "Unknown Event",
-            };
-          });
-          setMyTickets(ticketsWithEventNames);
-        } else {
-          // If no events found, just use placeholder names
-          const ticketsWithPlaceholders = mockTickets.map((ticket) => ({
-            ...ticket,
-            eventName: `Event ${ticket.eventId}`,
-          }));
-          setMyTickets(ticketsWithPlaceholders);
-        }
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching tickets:", error);
-        setLoading(false);
-      }
-    };
-
-    if (!contextLoading) {
-      fetchTickets();
-    }
-  }, [events, contextLoading, currentUserId]);
 
   // Check if the user has any tickets
-  const hasTickets = myTickets.length > 0;
+  const hasTickets = userTickets.length > 0;
 
   // Generate a random access code for the bonus ticket
   const generateAccessCode = () => {
@@ -98,20 +28,50 @@ const MyTicketsPage: React.FC = () => {
     return result;
   };
 
+  // Get event names for tickets
+  const getTicketsWithEventNames = () => {
+    return userTickets.map((ticket) => {
+      const event = events.find((e) => e.id === ticket.eventId);
+      return {
+        ...ticket,
+        eventName: event ? event.name : `Event ${ticket.eventId}`,
+      };
+    });
+  };
+
+  // Tickets with event names
+  const ticketsWithEventNames = getTicketsWithEventNames();
+
+  // Render the empty state when user has no tickets
+  const renderEmptyState = () => (
+    <div className="bg-gray-50 rounded-lg p-8 text-center mb-25">
+      <div className="mx-auto w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+        <TicketIcon className="h-8 w-auto" />
+      </div>
+      <h2 className="text-xl font-semibold mb-2">
+        You don't have any tickets yet
+      </h2>
+      <p className="text-gray-600 mb-6">
+        Register for events to get your tickets here. Your tickets will give you
+        access to events, whether they're in-person or virtual.
+      </p>
+      <button
+        onClick={() => navigate("/events")}
+        className="px-6 py-2 bg-[#655967] text-white rounded-md hover:bg-gray-600 transition-colors"
+      >
+        Unlock New Events
+      </button>
+    </div>
+  );
+
   return (
     <>
       <div className="max-w-7xl mx-auto mt-30 px-4 py-8 mt-20">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-gray-900">My Tickets</h1>
-          <button
-            onClick={() => navigate("/events")}
-            className="px-4 py-2 bg-[#655967] text-white rounded-md hover:bg-gray-600 transition-colors"
-          >
-            Browse Events
-          </button>
         </div>
 
-        {loading || contextLoading ? (
+        {ticketsLoading ? (
           <div className="flex justify-center items-center py-20">
             <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-600"></div>
           </div>
@@ -166,7 +126,7 @@ const MyTicketsPage: React.FC = () => {
                   </p>
                 </div>
                 <div className="grid grid-cols-1 max-w-2xl mx-auto gap-6">
-                  {myTickets.map((ticket) => (
+                  {ticketsWithEventNames.map((ticket) => (
                     <div
                       key={ticket.ticketId}
                       className="transform transition-transform hover:scale-[1.02]"
@@ -180,25 +140,7 @@ const MyTicketsPage: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <div className="bg-gray-50 rounded-lg p-8 text-center">
-                <div className="mx-auto w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
-                  <TicketIcon className="h-8 w-auto" />
-                </div>
-                <h2 className="text-xl font-semibold mb-2">
-                  You don't have any tickets yet
-                </h2>
-                <p className="text-gray-600 mb-6">
-                  Register for events to get your tickets here. Your tickets
-                  will give you access to events, whether they're in-person or
-                  virtual.
-                </p>
-                <button
-                  onClick={() => navigate("/events")}
-                  className="px-6 py-2 bg-[#655967] text-white rounded-md hover:bg-gray-600 transition-colors"
-                >
-                  Find Events
-                </button>
-              </div>
+              renderEmptyState()
             )}
           </div>
         )}
@@ -207,4 +149,4 @@ const MyTicketsPage: React.FC = () => {
   );
 };
 
-export default MyTicketsPage;
+export default TicketsPage;
