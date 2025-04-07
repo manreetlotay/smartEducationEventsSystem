@@ -4,7 +4,7 @@ export default function SignInRequired({ message = "Sign in to proceed" }) {
   const navigate = useNavigate();
   return (
     <>
-      <div className="text-center mt-60">
+      <div className="text-center mt-60 mb-40">
         <p className="mt-6 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">
           {message}
         </p>

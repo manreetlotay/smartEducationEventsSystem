@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { EVENT_FORMAT, Event } from "../../../lib/types/Events";
 import { useEventContext } from "../../../lib/context/EventContext";
 import Footer from "../../footer/Footer";
+import { useAuth } from "../../../lib/hooks/useAuth";
 
 interface CreateEventProps {
   mode?: "create" | "edit";
@@ -12,6 +13,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const { getEventById } = useEventContext();
+  const { user } = useAuth();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -415,7 +417,9 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
 
             {/* Location Section */}
             <div className="mb-8">
-              <h2 className="text-lg font-medium border-b pb-2 mb-4">Location</h2>
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">
+                Location
+              </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {(event.format === EVENT_FORMAT.PERSON ||
@@ -423,7 +427,9 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Address{" "}
-                      {event.format === EVENT_FORMAT.PERSON ? "*" : "(Optional)"}
+                      {event.format === EVENT_FORMAT.PERSON
+                        ? "*"
+                        : "(Optional)"}
                     </label>
                     <input
                       type="text"
@@ -441,7 +447,9 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Virtual Platform Link{" "}
-                      {event.format === EVENT_FORMAT.ONLINE ? "*" : "(Optional)"}
+                      {event.format === EVENT_FORMAT.ONLINE
+                        ? "*"
+                        : "(Optional)"}
                     </label>
                     <input
                       type="url"
@@ -668,7 +676,9 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
 
             {/* Speakers Section */}
             <div className="mb-8">
-              <h2 className="text-lg font-medium border-b pb-2 mb-4">Speakers</h2>
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">
+                Speakers
+              </h2>
               <EmailList
                 label="Speaker"
                 emails={speakerEmails}
@@ -680,7 +690,9 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
 
             {/* Sponsors Section */}
             <div className="mb-8">
-              <h2 className="text-lg font-medium border-b pb-2 mb-4">Sponsors</h2>
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">
+                Sponsors
+              </h2>
               <EmailList
                 label="Sponsor"
                 emails={sponsorEmails}
@@ -755,7 +767,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
           </form>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };

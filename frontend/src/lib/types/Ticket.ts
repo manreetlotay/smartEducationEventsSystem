@@ -8,7 +8,6 @@ export interface Ticket {
   virtualLink?: string;
   qrCode?: string; //for inPerson event
   registrationDate: Date;
-  isBonusTicket: Boolean; // free ticket for the bonus feature (redeem points)
 }
 
 export enum USER_ROLE {
@@ -18,4 +17,8 @@ export enum USER_ROLE {
   SPONSOR = "sponsor",
   STAKEHOLDER = "stakeholder",
   EVENT_ADMIN = "eventAdmin",
+}
+
+export interface BonusTicket {
+  accessCode: string;
 }

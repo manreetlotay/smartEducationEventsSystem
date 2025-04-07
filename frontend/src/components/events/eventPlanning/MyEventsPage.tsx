@@ -53,8 +53,8 @@ const MyEventsPage: React.FC = () => {
           <div>
             <div className="bg-violet-50 border-l-4 border-gray-500 p-4 mb-6 ">
               <p className="text-gray-700">
-                Manage your events here. Click on any event to edit details, view
-                attendees, or make updates.
+                Manage your events here. Click on any event to edit details,
+                view attendees, or make updates.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -82,14 +82,14 @@ const MyEventsPage: React.FC = () => {
               You haven't created any events yet
             </h2>
             <p className="text-gray-600 mb-6">
-              Begin now by creating your first event. As an admin, you'll be able
-              to manage attendees, edit event details, and get insights after the
-              event.
+              Begin now by creating your first event. As an admin, you'll be
+              able to manage attendees, edit event details, and get insights
+              after the event.
             </p>
           </div>
         )}
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };
