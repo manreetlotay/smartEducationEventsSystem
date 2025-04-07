@@ -216,7 +216,6 @@ def generate_mock_data():
         virtual_link=None,
         qr_code=None,
         registration_date=dt.datetime.now() - dt.timedelta(days=10),
-        is_bonus_ticket=False,
     )
 
     linda_admin_ticket = DbTicket(
@@ -227,7 +226,6 @@ def generate_mock_data():
         virtual_link="https://liquipedia.net/counterstrike/Portal:Tournaments",
         qr_code=None,
         registration_date=dt.datetime.now() - dt.timedelta(days=10),
-        is_bonus_ticket=False,
     )
 
     rache_csgo_ticket = DbTicket(
@@ -238,7 +236,6 @@ def generate_mock_data():
         virtual_link="https://liquipedia.net/counterstrike/Portal:Tournaments",
         qr_code=None,
         registration_date=dt.datetime.now() - dt.timedelta(days=10),
-        is_bonus_ticket=False,
     )
 
     with Session(engine) as session:
