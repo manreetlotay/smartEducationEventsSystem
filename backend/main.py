@@ -107,7 +107,7 @@ def generate_mock_data():
         first_name="Linda",
         last_name="Watt",
         user_type="individual",
-        points=6e10,
+        points=510,
         affiliation=None,
         profession=None,
         organization_name=None,
@@ -216,9 +216,9 @@ def generate_mock_data():
         user_id=rache_db.id,
         event_id=rache_event.id,
         role="eventAdmin",
-        access_code=None,
+        access_code="TBYDU-6789",
         virtual_link="https://virtual-conference-platform.com/tech2025",
-        qr_code=None,
+        qr_code="qr",
         registration_date=dt.datetime.now() - dt.timedelta(days=10),
     )
 
@@ -236,9 +236,9 @@ def generate_mock_data():
         user_id=rache_db.id,
         event_id=rache_event.id,
         role="organizer",
-        access_code="BEYFNID-45678",
+        access_code="TBYDU-6789",
         virtual_link="https://liquipedia.net/counterstrike/Portal:Tournaments",
-        qr_code=None,
+        qr_code="qr",
         registration_date=dt.datetime.now() - dt.timedelta(days=10),
     )
 
@@ -248,7 +248,7 @@ def generate_mock_data():
         role="eventAdmin",
         access_code="ABXCED-45678",
         virtual_link=None,
-        qr_code=None,
+        qr_code="qr",
         registration_date=dt.datetime.now() - dt.timedelta(days=10),
     )
 
@@ -258,7 +258,7 @@ def generate_mock_data():
         role="stakeholder",
         access_code="ABXCED-45678",
         virtual_link=None,
-        qr_code=None,
+        qr_code="qr",
         registration_date=dt.datetime.now() - dt.timedelta(days=10),
     )
 
@@ -266,8 +266,8 @@ def generate_mock_data():
         user_id=linda_db.id,
         event_id=karl_event.id,
         role="sponsor",
-        access_code="ABXCED-45678",
-        virtual_link=None,
+        access_code=None,
+        virtual_link="https://liquipedia.net/counterstrike/Portal:Tournaments",
         qr_code=None,
         registration_date=dt.datetime.now() - dt.timedelta(days=10),
     )
@@ -278,7 +278,7 @@ def generate_mock_data():
         role="attendee",
         access_code="ABXCED-45678",
         virtual_link=None,
-        qr_code=None,
+        qr_code="qr",
         registration_date=dt.datetime.now() - dt.timedelta(days=10),
     )
 
@@ -286,7 +286,7 @@ def generate_mock_data():
         user_id=karl_db.id,
         event_id=karl_event.id,
         role="eventAdmin",
-        access_code="BEYFNID-45678",
+        access_code=None,
         virtual_link="https://liquipedia.net/counterstrike/Portal:Tournaments",
         qr_code=None,
         registration_date=dt.datetime.now() - dt.timedelta(days=10),
@@ -296,7 +296,7 @@ def generate_mock_data():
         user_id=rache_db.id,
         event_id=karl_event.id,
         role="organizer",
-        access_code="BEYFNID-45678",
+        access_code=None,
         virtual_link="https://liquipedia.net/counterstrike/Portal:Tournaments",
         qr_code=None,
         registration_date=dt.datetime.now() - dt.timedelta(days=10),
@@ -308,7 +308,7 @@ def generate_mock_data():
         role="speaker",
         access_code="ABXCED-45678",
         virtual_link=None,
-        qr_code=None,
+        qr_code="qr",
         registration_date=dt.datetime.now() - dt.timedelta(days=10),
     )
 
@@ -318,7 +318,7 @@ def generate_mock_data():
         role="organizer",
         access_code="ABXCED-45678",
         virtual_link=None,
-        qr_code=None,
+        qr_code="qr",
         registration_date=dt.datetime.now() - dt.timedelta(days=10),
     )
 

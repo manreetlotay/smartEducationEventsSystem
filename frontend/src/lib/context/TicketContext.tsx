@@ -55,6 +55,33 @@ interface TicketProviderProps {
   children: ReactNode;
 }
 
+const mapBackendTicketToFrontend = (backendTicket: any): Ticket => {
+  return {
+    ticketId: String(backendTicket.id || backendTicket.ticket_id || "0"),
+    userId: String(backendTicket.user_id || "0"),
+    eventId: String(backendTicket.event_id || "0"),
+    role: backendTicket.role || USER_ROLE.ATTENDEE,
+    accessCode: backendTicket.access_code,
+    virtualLink: backendTicket.virtual_link,
+    qrCode: backendTicket.qr_code,
+    registrationDate: new Date(backendTicket.registration_date || new Date()),
+  };
+};
+
+const mapFrontendTicketToBackend = (frontendTicket: Ticket): any => {
+  return {
+    user_id: parseInt(frontendTicket.userId),
+    event_id: parseInt(frontendTicket.eventId),
+    role: frontendTicket.role,
+    access_code: frontendTicket.accessCode,
+    virtual_link: frontendTicket.virtualLink,
+    qr_code: frontendTicket.qrCode,
+    registration_date: frontendTicket.registrationDate.toISOString(),
+  };
+};
+
+const API_BASE_URL = "http://localhost:8000";
+
 export const TicketProvider: React.FC<TicketProviderProps> = ({ children }) => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [userTickets, setUserTickets] = useState<Ticket[]>([]);
@@ -66,15 +93,17 @@ export const TicketProvider: React.FC<TicketProviderProps> = ({ children }) => {
   // Function to fetch all tickets
   const fetchTickets = async (): Promise<void> => {
     try {
-      // In a real app, this would be an API call
-      // For now, using mock data
       setLoading(true);
       setError(null);
 
-      // // Simulate network delay
-      // await new Promise((resolve) => setTimeout(resolve, 100));
+      const ticketsResponse = await fetch(`${API_BASE_URL}/tickets`);
+      if (!ticketsResponse.ok) {
+        throw new Error(`Failed to fetch tickets: ${ticketsResponse.status}`);
+      }
+      const ticketsData = await ticketsResponse.json();
+      const tickets: Ticket[] = ticketsData.map(mapBackendTicketToFrontend);
 
-      setTickets(mockTickets);
+      setTickets(tickets);
 
       // Filter tickets for the current user if user exists
       if (user) {
