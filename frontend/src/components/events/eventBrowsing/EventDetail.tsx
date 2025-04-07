@@ -24,7 +24,8 @@ const EventDetail: React.FC = () => {
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
 
   // Check if current user is the admin of this event
-  const isEventAdmin = event && event.eventAdmin.id === user?.id;
+  const isEventAdmin =
+    event && String(event.eventAdmin.id) === String(user?.id);
 
   // Handle edit button click
   const handleEditClick = () => {
