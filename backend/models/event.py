@@ -21,13 +21,13 @@ class Event(EventBase):
     start_date: dt.datetime
     end_date: dt.datetime
     capacity: int
-    registration_deadline: dt.datetime | None
+    registration_deadline: dt.datetime | None = Field(default=None)
     address: str | None = Field(default=None)
     virtual_link: str | None = Field(default=None)
     is_free: bool
-    price: float | None
+    price: float | None = Field(default=None)
     agenda: str
-    admin_id: int | None
+    admin_id: int | None = Field(default=None)
 
 
 class DbEvent(Event, table=True):

@@ -17,8 +17,8 @@ class User(SQLModel):
     first_name: str | None = Field(nullable=True, default=None)
     last_name: str | None = Field(nullable=True, default=None)
     affiliation: str | None = Field(nullable=True, default=None)
-    organization_name: str | None
-    organization_address: str | None
+    organization_name: str | None = Field(default=None, primary_key=True)
+    organization_address: str | None = Field(default=None, primary_key=True)
     is_site_admin: bool = Field(default=False)
 
 
