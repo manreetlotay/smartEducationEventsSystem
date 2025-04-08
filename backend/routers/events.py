@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException, Query, Body
 from sqlmodel import select
 from db_session import SessionDep
 from models.event import Event, DbEvent, EventPublic
-from models.ticket import DbTicket, UserRole
+from models.ticket import DbTicket, TicketPublic, UserRole
 from models.user import DbUser, UserPublic
 from pydantic import BaseModel
 
@@ -83,8 +83,8 @@ def organizers(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.ORGANIZER)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.ORGANIZER)
     )
     users = session.exec(query).all()
     return users
@@ -98,8 +98,8 @@ def attendees(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.ATTENDEE)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.ATTENDEE)
     )
     users = session.exec(query).all()
     return users
@@ -113,8 +113,8 @@ def speakers(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.SPEAKER)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.SPEAKER)
     )
     users = session.exec(query).all()
     return users
@@ -128,8 +128,8 @@ def sponsors(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.SPONSOR)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.SPONSOR)
     )
     users = session.exec(query).all()
     return users
@@ -143,8 +143,8 @@ def stakeholders(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.STAKEHOLDER)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.STAKEHOLDER)
     )
     users = session.exec(query).all()
     return users
@@ -158,48 +158,105 @@ def eventAdmins(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.EVENT_ADMIN)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.EVENT_ADMIN)
     )
     users = session.exec(query).all()
     return users
 
 
-# New endpoint for removing users from an event
-class RemoveUsersRequest(BaseModel):
-    userIds: List[str]
-    role: UserRole
-
-@router.post("/{event_id}/remove-users")
-def remove_users_from_event(
-    event_id: int, 
-    request: RemoveUsersRequest,
-    session: SessionDep
+router.get("/tickets/{event_id}/users", response_model=list[TicketPublic])
+def user_tickets(
+    event_id: int,
+    session: SessionDep,
 ):
-    # Verify the event exists
-    event = session.get(DbEvent, event_id)
-    if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
-    
-    # Convert string IDs to integers
-    user_ids = [int(user_id) for user_id in request.userIds]
-    
-    # Find tickets matching the criteria
-    # Fix: Use proper SQLAlchemy syntax for conditions
-    statement = select(DbTicket).where(
-        (DbTicket.event_id == event_id) &
-        (DbTicket.user_id.in_(user_ids)) &
-        (DbTicket.role == request.role)
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
     )
-    tickets = session.exec(statement).all()
-    
-    if not tickets:
-        raise HTTPException(status_code=404, detail="No matching tickets found")
-    
-    # Delete the tickets
-    for ticket in tickets:
-        session.delete(ticket)
-    
-    session.commit()
-    
-    return {"message": f"Successfully removed {len(tickets)} users from the event", "removed_count": len(tickets)}
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/organizers", response_model=list[TicketPublic])
+def organizer_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.ORGANIZER)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/attendees", response_model=list[TicketPublic])
+def attendee_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.ATTENDEE)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/speakers", response_model=list[TicketPublic])
+def speaker_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.SPEAKER)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/sponsors", response_model=list[TicketPublic])
+def sponsor_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.SPONSOR)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/stakeholders", response_model=list[TicketPublic])
+def stakeholder_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.STAKEHOLDER)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/eventAdmins", response_model=list[TicketPublic])
+def eventAdmin_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.EVENT_ADMIN)
+    )
+    tickets = session.exec(query).all()
+    return tickets
