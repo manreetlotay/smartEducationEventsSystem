@@ -22,7 +22,7 @@ class Event(EventBase):
     end_date: dt.datetime
     capacity: int
     registration_deadline: dt.datetime | None
-    address: str | None
+    address: str | None = Field(default=None)
     virtual_link: str | None = Field(default=None)
     is_free: bool
     price: float | None
