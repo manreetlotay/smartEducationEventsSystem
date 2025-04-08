@@ -107,7 +107,7 @@ export default function Navbar() {
             Browse Events
           </a>
           <a
-            href="createevent"
+            href="/createevent"
             className="text-sm/6 font-semibold text-gray-900"
           >
             Create Events
