@@ -66,7 +66,7 @@ def delete_ticket(ticket_id: int, session: SessionDep):
     return {"ok": True}
 
 
-@router.get("filter/{user_id}/{event_id}", response_model=list[TicketPublic])
+@router.get("/filter/{user_id}/{event_id}", response_model=list[TicketPublic])
 def filter_tickets(user_id: int, event_id: int, session: SessionDep):
     query = (
         select(DbTicket)
@@ -76,7 +76,7 @@ def filter_tickets(user_id: int, event_id: int, session: SessionDep):
     return tickets
 
 
-@router.delete("filter/{user_id}/{event_id}", response_model=list[TicketPublic])
+@router.delete("/filter/{user_id}/{event_id}", response_model=list[TicketPublic])
 def filter_delete_tickets(user_id: int, event_id: int, session: SessionDep):
     query = (
         select(DbTicket)
