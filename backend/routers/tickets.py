@@ -64,3 +64,25 @@ def delete_ticket(ticket_id: int, session: SessionDep):
     session.delete(ticket)
     session.commit()
     return {"ok": True}
+
+
+@router.get("filter/{user_id}/{event_id}", response_model=list[TicketPublic])
+def filter_tickets(user_id: int, event_id: int, session: SessionDep):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.delete("filter/{user_id}/{event_id}", response_model=list[TicketPublic])
+def filter_delete_tickets(user_id: int, event_id: int, session: SessionDep):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+    )
+    tickets = session.exec(query).all()
+    session.delete(tickets)
+    session.commit()
+    return {"ok": True}

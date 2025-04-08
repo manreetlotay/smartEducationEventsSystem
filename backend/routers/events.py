@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException, Query
 from sqlmodel import select
 from db_session import SessionDep
 from models.event import Event, DbEvent, EventPublic
-from models.ticket import DbTicket, UserRole
+from models.ticket import DbTicket, TicketPublic, UserRole
 from models.user import DbUser, UserPublic
 
 router = APIRouter(prefix="/events", tags=["Events"])
@@ -163,3 +163,100 @@ def eventAdmins(
     )
     users = session.exec(query).all()
     return users
+
+
+router.get("/tickets/{event_id}/users", response_model=list[TicketPublic])
+def user_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/organizers", response_model=list[TicketPublic])
+def organizer_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id and
+               DbTicket.role == UserRole.ORGANIZER)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/attendees", response_model=list[TicketPublic])
+def attendee_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id and
+               DbTicket.role == UserRole.ATTENDEE)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/speakers", response_model=list[TicketPublic])
+def speaker_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id and
+               DbTicket.role == UserRole.SPEAKER)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/sponsors", response_model=list[TicketPublic])
+def sponsor_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id and
+               DbTicket.role == UserRole.SPONSOR)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/stakeholders", response_model=list[TicketPublic])
+def stakeholder_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id and
+               DbTicket.role == UserRole.STAKEHOLDER)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/eventAdmins", response_model=list[TicketPublic])
+def eventAdmin_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id and
+               DbTicket.role == UserRole.EVENT_ADMIN)
+    )
+    tickets = session.exec(query).all()
+    return tickets
