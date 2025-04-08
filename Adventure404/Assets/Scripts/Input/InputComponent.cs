@@ -4,6 +4,6 @@ using Unity.Mathematics;
 
 public struct InputComponent : IComponentData
 {
-    public float2 moveVector;
-    public bool missileIsPressed;
+    public float2 MoveVector;
+    public bool MissileIsPressed;
 }

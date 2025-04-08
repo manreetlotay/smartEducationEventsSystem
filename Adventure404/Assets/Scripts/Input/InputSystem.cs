@@ -25,8 +25,8 @@ public partial class InputSystem : SystemBase
 
         SystemAPI.SetSingleton(new InputComponent
         {
-            moveVector = moveVector,
-            missileIsPressed = missile
+            MoveVector = moveVector,
+            MissileIsPressed = missile
         });
     }
 }
