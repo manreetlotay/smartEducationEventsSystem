@@ -1,10 +1,11 @@
-from typing import Annotated
-from fastapi import APIRouter, HTTPException, Query
+from typing import Annotated, List
+from fastapi import APIRouter, HTTPException, Query, Body
 from sqlmodel import select
 from db_session import SessionDep
 from models.event import Event, DbEvent, EventPublic
 from models.ticket import DbTicket, UserRole
 from models.user import DbUser, UserPublic
+from pydantic import BaseModel
 
 router = APIRouter(prefix="/events", tags=["Events"])
 
@@ -72,7 +73,6 @@ def users(
     )
     users = session.exec(query).all()
     return users
-
 
 
 @router.get("/{event_id}/organizers", response_model=list[UserPublic])
@@ -163,3 +163,43 @@ def eventAdmins(
     )
     users = session.exec(query).all()
     return users
+
+
+# New endpoint for removing users from an event
+class RemoveUsersRequest(BaseModel):
+    userIds: List[str]
+    role: UserRole
+
+@router.post("/{event_id}/remove-users")
+def remove_users_from_event(
+    event_id: int, 
+    request: RemoveUsersRequest,
+    session: SessionDep
+):
+    # Verify the event exists
+    event = session.get(DbEvent, event_id)
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    # Convert string IDs to integers
+    user_ids = [int(user_id) for user_id in request.userIds]
+    
+    # Find tickets matching the criteria
+    # Fix: Use proper SQLAlchemy syntax for conditions
+    statement = select(DbTicket).where(
+        (DbTicket.event_id == event_id) &
+        (DbTicket.user_id.in_(user_ids)) &
+        (DbTicket.role == request.role)
+    )
+    tickets = session.exec(statement).all()
+    
+    if not tickets:
+        raise HTTPException(status_code=404, detail="No matching tickets found")
+    
+    # Delete the tickets
+    for ticket in tickets:
+        session.delete(ticket)
+    
+    session.commit()
+    
+    return {"message": f"Successfully removed {len(tickets)} users from the event", "removed_count": len(tickets)}

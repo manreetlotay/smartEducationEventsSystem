@@ -237,6 +237,9 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
       setLoading(true);
       setError(null);
 
+      // Add a cache-busting parameter to avoid cached responses
+      const timestamp = new Date().getTime();
+
       // 1. Fetch events from API
       const eventsResponse = await fetch(`${API_BASE_URL}/events`);
       if (!eventsResponse.ok) {

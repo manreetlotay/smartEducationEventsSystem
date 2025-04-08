@@ -11,6 +11,9 @@ import { useTickets } from "../../../lib/context/TicketContext";
 import { PencilIcon } from "@heroicons/react/20/solid";
 import { Instagram, Facebook, Linkedin } from "lucide-react";
 import { useAuth } from "../../../lib/hooks/useAuth";
+import { UserGroupIcon } from "@heroicons/react/20/solid";
+import ManageAttendeesModal from "./attendeeManagement/AttendeeManagement";
+import { removeUsersFromEvent } from "../../../lib/services/eventService";
 
 const EventDetail: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -28,8 +31,10 @@ const EventDetail: React.FC = () => {
   const [registrationLoading, setRegistrationLoading] = useState(false);
   const [registrationError, setRegistrationError] = useState("");
   const [isUserRegistered, setIsUserRegistered] = useState(false);
+  const [showManageAttendeesModal, setShowManageAttendeesModal] = useState<boolean>(false);
 
   const API_BASE_URL = "http://localhost:8000";
+  
 
   // Check if current user is the admin of this event
   const isEventAdmin =
@@ -38,6 +43,46 @@ const EventDetail: React.FC = () => {
   // Handle edit button click
   const handleEditClick = () => {
     if (event != null) navigate(`/createevent/${event.id}`);
+  };
+
+  // Handle manage attendees button click
+  const handleManageAttendeesClick = () => {
+    setShowManageAttendeesModal(true);
+  };
+
+  // Handle removing users from event
+  const handleRemoveUsers = async (userIds: string[], role: USER_ROLE): Promise<boolean> => {
+    if (!event) return false;
+    
+    try {
+      console.log("EventDetail: Removing users:", userIds, "with role:", role);
+      console.log("EventDetail: Event ID being used:", event.id);
+      
+      const response = await removeUsersFromEvent(event.id, userIds, role);
+      console.log("EventDetail: Remove users response:", response);
+      
+      // Force a complete refresh of event data
+      console.log("EventDetail: Refreshing events data...");
+      await fetchEvents();
+      
+      // Get the refreshed event data
+      console.log("EventDetail: Getting refreshed event data for ID:", eventId);
+      const refreshedEvent = getEventById(eventId || "");
+      console.log("EventDetail: Refreshed event data:", refreshedEvent);
+      
+      if (refreshedEvent) {
+        // Update local state with the new event data
+        console.log("EventDetail: Updating local state with refreshed event");
+        setEvent(refreshedEvent);
+        return true;
+      } else {
+        console.error("EventDetail: Could not find refreshed event with ID:", eventId);
+        return false;
+      }
+    } catch (error) {
+      console.error("EventDetail: Error removing users:", error);
+      throw error;
+    }
   };
 
   // Check if user is already registered for this event using TicketContext
@@ -382,9 +427,27 @@ const EventDetail: React.FC = () => {
   return (
     <>
       <div className="max-w-6xl mx-auto mt-30 px-4 pb-16 relative z-10">
+        {/* Manage Attendees Modal */}
+        {event && (
+          <ManageAttendeesModal
+            isOpen={showManageAttendeesModal}
+            onClose={() => setShowManageAttendeesModal(false)}
+            eventId={event.id}
+            attendees={event.attendees || []}
+            sponsors={event.sponsors || []}
+            onRemoveUsers={handleRemoveUsers}
+          />
+        )}
         {/* Admin Action Bar - Only shown to event admins */}
         {isEventAdmin && (
-          <div className="bg-gray-200 p-4 mb-6 rounded-md flex justify-end items-center">
+          <div className="bg-gray-200 p-4 mb-6 rounded-md flex justify-end items-center space-x-4">
+            <button
+              onClick={handleManageAttendeesClick}
+              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              <UserGroupIcon className="h-5 w-5 mr-2" />
+              Manage Attendees
+            </button>
             <button
               onClick={handleEditClick}
               className="flex items-center px-4 py-2 bg-[#655967] text-white rounded-md hover:bg-gray-700 transition-colors"
