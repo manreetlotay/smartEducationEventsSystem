@@ -71,6 +71,7 @@ def filter_tickets(user_id: int, event_id: int, session: SessionDep):
     query = (
         select(DbTicket)
         .where(DbTicket.event_id == event_id)
+        .where(DbTicket.user_id == user_id)
     )
     tickets = session.exec(query).all()
     return tickets
@@ -81,6 +82,7 @@ def filter_delete_tickets(user_id: int, event_id: int, session: SessionDep):
     query = (
         select(DbTicket)
         .where(DbTicket.event_id == event_id)
+        .where(DbTicket.user_id == user_id)
     )
     tickets = session.exec(query).all()
     session.delete(tickets)

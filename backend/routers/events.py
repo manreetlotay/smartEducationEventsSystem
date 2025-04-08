@@ -83,8 +83,8 @@ def organizers(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.ORGANIZER)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.ORGANIZER)
     )
     users = session.exec(query).all()
     return users
@@ -98,8 +98,8 @@ def attendees(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.ATTENDEE)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.ATTENDEE)
     )
     users = session.exec(query).all()
     return users
@@ -113,8 +113,8 @@ def speakers(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.SPEAKER)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.SPEAKER)
     )
     users = session.exec(query).all()
     return users
@@ -128,8 +128,8 @@ def sponsors(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.SPONSOR)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.SPONSOR)
     )
     users = session.exec(query).all()
     return users
@@ -143,8 +143,8 @@ def stakeholders(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.STAKEHOLDER)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.STAKEHOLDER)
     )
     users = session.exec(query).all()
     return users
@@ -158,8 +158,8 @@ def eventAdmins(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.EVENT_ADMIN)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.EVENT_ADMIN)
     )
     users = session.exec(query).all()
     return users
@@ -185,8 +185,8 @@ def organizer_tickets(
 ):
     query = (
         select(DbTicket)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.ORGANIZER)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.ORGANIZER)
     )
     tickets = session.exec(query).all()
     return tickets
@@ -199,8 +199,8 @@ def attendee_tickets(
 ):
     query = (
         select(DbTicket)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.ATTENDEE)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.ATTENDEE)
     )
     tickets = session.exec(query).all()
     return tickets
@@ -213,8 +213,8 @@ def speaker_tickets(
 ):
     query = (
         select(DbTicket)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.SPEAKER)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.SPEAKER)
     )
     tickets = session.exec(query).all()
     return tickets
@@ -227,8 +227,8 @@ def sponsor_tickets(
 ):
     query = (
         select(DbTicket)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.SPONSOR)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.SPONSOR)
     )
     tickets = session.exec(query).all()
     return tickets
@@ -241,8 +241,8 @@ def stakeholder_tickets(
 ):
     query = (
         select(DbTicket)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.STAKEHOLDER)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.STAKEHOLDER)
     )
     tickets = session.exec(query).all()
     return tickets
@@ -255,8 +255,8 @@ def eventAdmin_tickets(
 ):
     query = (
         select(DbTicket)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.EVENT_ADMIN)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.EVENT_ADMIN)
     )
     tickets = session.exec(query).all()
     return tickets
