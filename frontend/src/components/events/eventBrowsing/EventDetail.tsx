@@ -13,7 +13,7 @@ import { Instagram, Facebook, Linkedin } from "lucide-react";
 import { useAuth } from "../../../lib/hooks/useAuth";
 import { UserGroupIcon } from "@heroicons/react/20/solid";
 import ManageAttendeesModal from "./attendeeManagement/AttendeeManagement";
-import { removeUsersFromEvent } from "../../../lib/services/eventService";
+import { removeUsersFromEvent, deleteAttendeeTicket } from "../../../lib/services/eventService";
 
 const EventDetail: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -53,34 +53,32 @@ const EventDetail: React.FC = () => {
   // Handle removing users from event
   const handleRemoveUsers = async (userIds: string[], role: USER_ROLE): Promise<boolean> => {
     if (!event) return false;
-    
+  
+    if (role !== USER_ROLE.ATTENDEE) {
+      console.error("Only attendee removal is supported in this implementation.");
+      return false;
+    }
+  
     try {
-      console.log("EventDetail: Removing users:", userIds, "with role:", role);
-      console.log("EventDetail: Event ID being used:", event.id);
-      
-      const response = await removeUsersFromEvent(event.id, userIds, role);
-      console.log("EventDetail: Remove users response:", response);
-      
-      // Force a complete refresh of event data
-      console.log("EventDetail: Refreshing events data...");
+      // Remove each attendee ticket by calling deleteAttendeeTicket in parallel.
+      await Promise.all(
+        userIds.map(async (userId) => {
+          await deleteAttendeeTicket(event.id.toString(), userId);
+        })
+      );
+  
+      // Force a refresh of event data after ticket deletion.
       await fetchEvents();
-      
-      // Get the refreshed event data
-      console.log("EventDetail: Getting refreshed event data for ID:", eventId);
       const refreshedEvent = getEventById(eventId || "");
-      console.log("EventDetail: Refreshed event data:", refreshedEvent);
-      
       if (refreshedEvent) {
-        // Update local state with the new event data
-        console.log("EventDetail: Updating local state with refreshed event");
         setEvent(refreshedEvent);
         return true;
       } else {
-        console.error("EventDetail: Could not find refreshed event with ID:", eventId);
+        console.error("EventDetail: Could not refresh event with ID:", eventId);
         return false;
       }
     } catch (error) {
-      console.error("EventDetail: Error removing users:", error);
+      console.error("EventDetail: Error removing attendee tickets:", error);
       throw error;
     }
   };
@@ -209,7 +207,7 @@ const EventDetail: React.FC = () => {
     if (!event) return;
     if (!user) {
       // Redirect to login if user is not authenticated
-      navigate("/login", { state: { redirect: `/det/${eventId}` } });
+      navigate("/signin", { state: { redirect: `/det/${eventId}` } });
       return;
     }
 

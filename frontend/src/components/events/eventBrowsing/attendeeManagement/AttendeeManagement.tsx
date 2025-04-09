@@ -58,31 +58,19 @@ const ManageAttendeesModal: React.FC<ManageAttendeesModalProps> = ({
   const handleRemoveSelected = async () => {
     if (selectedUsers.length === 0) return;
     
-    console.log("Starting removal process with selected users:", selectedUsers);
-    console.log("Current user type:", userType);
-    console.log("Role being used:", userType === "attendees" ? USER_ROLE.ATTENDEE : USER_ROLE.SPONSOR);
-    
     try {
       setIsProcessing(true);
-      console.log("Calling onRemoveUsers with:", selectedUsers, userType === "attendees" ? USER_ROLE.ATTENDEE : USER_ROLE.SPONSOR);
-      const success = await onRemoveUsers(selectedUsers, userType === "attendees" ? USER_ROLE.ATTENDEE : USER_ROLE.SPONSOR);
-      console.log("onRemoveUsers result:", success);
-      
+      const success = await onRemoveUsers(
+        selectedUsers, 
+        userType === "attendees" ? USER_ROLE.ATTENDEE : USER_ROLE.SPONSOR
+      );
       if (success) {
-        // Clear selections
+        // Clear selections and close the modal to trigger a UI refresh
         setSelectedUsers([]);
-        
-        // Close and reopen the modal to refresh the UI with updated data
         onClose();
       }
     } catch (error) {
-      console.error("Detailed error when removing users:", error);
-      
-      // Check if error is an AxiosError
-      if (error && typeof error === 'object' && 'response' in error) {
-        console.error("API response details:", error.response);
-      }
-      
+      console.error("Error when removing users:", error);
       alert("Failed to remove users. Please try again.");
     } finally {
       setIsProcessing(false);

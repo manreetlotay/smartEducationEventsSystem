@@ -1,4 +1,3 @@
-// lib/services/eventService.ts
 import axios from 'axios';
 import { USER_ROLE } from '../types/Ticket';
 import { User } from '../types/User';
@@ -77,6 +76,30 @@ export const getEventSponsors = async (eventId: string): Promise<User[]> => {
     return response.data;
   } catch (error) {
     console.error('Error fetching event sponsors:', error);
+    throw error;
+  }
+};
+
+export const deleteAttendeeTicket = async (
+  eventId: string,
+  userId: string
+): Promise<any> => {
+  try {
+    // Add '/events' to the endpoint so it matches your FastAPI route
+    const response = await axios.delete(
+      `${API_BASE_URL}/events/tickets/${eventId}/${userId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          // Include auth token if required
+          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+      }
+    );
+    console.log("deleteAttendeeTicket: API response:", response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error('deleteAttendeeTicket: Error deleting attendee ticket:', error);
     throw error;
   }
 };

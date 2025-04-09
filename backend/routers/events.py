@@ -260,3 +260,19 @@ def eventAdmin_tickets(
     )
     tickets = session.exec(query).all()
     return tickets
+
+
+@router.delete("/tickets/{event_id}/{user_id}", response_model=TicketPublic)
+def delete_attendee_ticket(event_id: int, user_id: int, session: SessionDep):
+    ticket = session.exec(
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.user_id == user_id)
+        .where(DbTicket.role == UserRole.ATTENDEE)
+    ).first()
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Attendee ticket not found")
+    
+    session.delete(ticket)
+    session.commit()
+    return ticket
