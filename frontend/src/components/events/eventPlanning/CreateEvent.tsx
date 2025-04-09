@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { EVENT_FORMAT, Event } from "../../../lib/types/Events";
 import { useEventContext } from "../../../lib/context/EventContext";
 import Footer from "../../footer/Footer";
+import { useAuth } from "../../../lib/hooks/useAuth";
 
 interface CreateEventProps {
   mode?: "create" | "edit";
@@ -11,7 +12,8 @@ interface CreateEventProps {
 const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
-  const { getEventById } = useEventContext();
+  const { getEventById, updateEvent, createEvent } = useEventContext();
+  const { user } = useAuth();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -178,27 +180,81 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
         throw new Error("Price must be greater than 0 for paid events");
       }
 
-      // In a real application, you would send the event data and the emails to the backend
+      // Prepare the event data for submission
+      const eventData: Event = {
+        ...(event as Event),
+        // Ensure we have an ID (will be overwritten by backend for new events)
+        id: mode === "edit" && eventId ? eventId : "temp-id",
+        // Set the current user as the event admin
+        eventAdmin: user || {
+          id: "0",
+          email: "",
+          password: "",
+          phoneNumber: "",
+          profileImage: "",
+          userType: "individual",
+          points: 0,
+          firstName: "",
+          lastName: "",
+          organizationName: "",
+          organizationAddress: "",
+          is_site_admin: false,
+        },
+        // Initialize empty arrays for the various participants
+        // These will be handled separately by the backend through tickets
+        organizers: [],
+        sponsors: [],
+        speakers: [],
+        attendees: [],
+        stakeholders: [],
+      };
+
+      // Log for debugging
       console.log("Submitting event:", {
-        ...event,
+        ...eventData,
         organizerEmails,
         speakerEmails,
         sponsorEmails,
         stakeholderEmails,
       });
 
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      let resultEventId: string;
+      
+      if (mode === "edit" && eventId) {
+        // Update existing event
+        await updateEvent(eventId, eventData);
+        resultEventId = eventId;
+      } else {
+        // Create new event
+        const createdEvent = await createEvent(eventData);
+        resultEventId = createdEvent.id;
+        
+        // Create tickets for all the participant emails
+        try {
+          await createTicketsForEvent(
+            resultEventId, 
+            organizerEmails, 
+            speakerEmails, 
+            sponsorEmails, 
+            stakeholderEmails
+          );
+        } catch (ticketError) {
+          console.error("Error creating tickets:", ticketError);
+          // We don't throw here to avoid blocking navigation if ticket creation fails
+          // Instead, we log the error and continue
+        }
+      }
 
       // Navigate to the my events page after successful submission
       navigate("/myevents");
     } catch (error) {
-      console.error("Error creating event:", error);
+      console.error("Error creating/updating event:", error);
       setError(
         `${
           error instanceof Error ? error.message : "An unknown error occurred"
         }`
       );
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -415,7 +471,9 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
 
             {/* Location Section */}
             <div className="mb-8">
-              <h2 className="text-lg font-medium border-b pb-2 mb-4">Location</h2>
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">
+                Location
+              </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {(event.format === EVENT_FORMAT.PERSON ||
@@ -423,7 +481,9 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Address{" "}
-                      {event.format === EVENT_FORMAT.PERSON ? "*" : "(Optional)"}
+                      {event.format === EVENT_FORMAT.PERSON
+                        ? "*"
+                        : "(Optional)"}
                     </label>
                     <input
                       type="text"
@@ -441,7 +501,9 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Virtual Platform Link{" "}
-                      {event.format === EVENT_FORMAT.ONLINE ? "*" : "(Optional)"}
+                      {event.format === EVENT_FORMAT.ONLINE
+                        ? "*"
+                        : "(Optional)"}
                     </label>
                     <input
                       type="url"
@@ -668,7 +730,9 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
 
             {/* Speakers Section */}
             <div className="mb-8">
-              <h2 className="text-lg font-medium border-b pb-2 mb-4">Speakers</h2>
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">
+                Speakers
+              </h2>
               <EmailList
                 label="Speaker"
                 emails={speakerEmails}
@@ -680,7 +744,9 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
 
             {/* Sponsors Section */}
             <div className="mb-8">
-              <h2 className="text-lg font-medium border-b pb-2 mb-4">Sponsors</h2>
+              <h2 className="text-lg font-medium border-b pb-2 mb-4">
+                Sponsors
+              </h2>
               <EmailList
                 label="Sponsor"
                 emails={sponsorEmails}
@@ -755,7 +821,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
           </form>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };

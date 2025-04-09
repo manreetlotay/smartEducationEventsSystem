@@ -2,19 +2,25 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Event, EVENT_FORMAT } from "../../../lib/types/Events";
 import { User } from "../../../lib/types/User";
+import { USER_ROLE } from "../../../lib/types/Ticket";
 import PageNotFound from "../../status/PageNotFound";
 import PaymentPage from "../../payment/PaymentPage";
 import PaymentSuccess from "../../payment/PaymentSuccess";
 import { useEventContext } from "../../../lib/context/EventContext";
+import { useTickets } from "../../../lib/context/TicketContext";
 import { PencilIcon } from "@heroicons/react/20/solid";
 import { Instagram, Facebook, Linkedin } from "lucide-react";
 import { useAuth } from "../../../lib/hooks/useAuth";
+import { UserGroupIcon } from "@heroicons/react/20/solid";
+import ManageAttendeesModal from "./attendeeManagement/AttendeeManagement";
+import { removeUsersFromEvent, deleteAttendeeTicket } from "../../../lib/services/eventService";
 
 const EventDetail: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const { getEventById, fetchEvents } = useEventContext();
+  const { createTicket, userTickets } = useTickets();
   const { user } = useAuth();
 
   const [event, setEvent] = useState<Event | null>(null);
@@ -22,14 +28,76 @@ const EventDetail: React.FC = () => {
   const [error, setError] = useState("");
   const [showPaymentPage, setShowPaymentPage] = useState(false);
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
+  const [registrationLoading, setRegistrationLoading] = useState(false);
+  const [registrationError, setRegistrationError] = useState("");
+  const [isUserRegistered, setIsUserRegistered] = useState(false);
+  const [showManageAttendeesModal, setShowManageAttendeesModal] = useState<boolean>(false);
+
+  const API_BASE_URL = "http://localhost:8000";
+  
 
   // Check if current user is the admin of this event
-  const isEventAdmin = event && event.eventAdmin.id === user?.id;
+  const isEventAdmin =
+    event && user && String(event.eventAdmin.id) === String(user.id);
 
   // Handle edit button click
   const handleEditClick = () => {
     if (event != null) navigate(`/createevent/${event.id}`);
   };
+
+  // Handle manage attendees button click
+  const handleManageAttendeesClick = () => {
+    setShowManageAttendeesModal(true);
+  };
+
+  // Handle removing users from event
+  const handleRemoveUsers = async (userIds: string[], role: USER_ROLE): Promise<boolean> => {
+    if (!event) return false;
+  
+    if (role !== USER_ROLE.ATTENDEE) {
+      console.error("Only attendee removal is supported in this implementation.");
+      return false;
+    }
+  
+    try {
+      // Remove the attendee ticket for each selected user
+      await Promise.all(
+        userIds.map(async (userId) => {
+          await deleteAttendeeTicket(event.id.toString(), userId);
+        })
+      );
+  
+      // Update the local event state to remove the deleted attendees
+      const updatedAttendees = (event.attendees || []).filter(
+        (attendee) => !userIds.includes(attendee.id)
+      );
+      // Update the event state so the modal gets the refreshed list
+      setEvent({ ...event, attendees: updatedAttendees });
+  
+      return true;
+    } catch (error) {
+      console.error("Error removing attendee tickets:", error);
+      throw error;
+    }
+  };  
+
+  // Check if user is already registered for this event using TicketContext
+  useEffect(() => {
+    if (user && event && userTickets.length > 0) {
+      // Check if the user has a ticket for this event
+      const hasTicket = userTickets.some(
+        (ticket) => String(ticket.eventId) === String(event.id)
+      );
+
+      console.log("user already registered to this", hasTicket);
+
+      setIsUserRegistered(hasTicket);
+      console.log(
+        "User registration status:",
+        hasTicket ? "Registered" : "Not registered"
+      );
+    }
+  }, [user, event?.id, userTickets]);
 
   // Fetch event details based on ID
   useEffect(() => {
@@ -64,6 +132,21 @@ const EventDetail: React.FC = () => {
         }
 
         setLoading(false);
+
+        if (user && eventId && userTickets.length > 0) {
+          // Check if the user has a ticket for this event
+          const hasTicket = userTickets.some(
+            (ticket) => String(ticket.eventId) === String(eventId)
+          );
+
+          console.log("user already registered to this", hasTicket);
+
+          setIsUserRegistered(hasTicket);
+          console.log(
+            "User registration status:",
+            hasTicket ? "Registered" : "Not registered"
+          );
+        }
       } catch (err) {
         setError("Failed to load event details");
         setLoading(false);
@@ -85,18 +168,81 @@ const EventDetail: React.FC = () => {
     }).format(date);
   };
 
-  const registerForEvent = () => {
-    if (!event) return;
+  // Process ticket creation
+  const processTicketCreation = async () => {
+    if (!event || !user) return;
 
-    if (event.isFree) {
-      // Handle free registration logic
-      console.log("Processing free registration");
+    try {
+      setRegistrationLoading(true);
+      setRegistrationError("");
+
+      // Create a new ticket for this user and event
+      const newTicket = {
+        userId: user.id,
+        eventId: event.id,
+        role: USER_ROLE.ATTENDEE,
+        registrationDate: new Date(),
+      };
+
+      const createdTicket = await createTicket(newTicket);
+      console.log("Ticket created successfully:", createdTicket);
+
+      // Update registration status
+      setIsUserRegistered(true);
       setShowPaymentSuccess(true);
-      // Perhaps redirect to a confirmation page
-      // navigate(`/events/${eventId}/registered`);
-    } else {
-      // For paid events, show the payment page
-      setShowPaymentPage(true);
+    } catch (err: any) {
+      console.error("Error creating ticket:", err);
+      setRegistrationError(
+        err.message || "Failed to register for this event. Please try again."
+      );
+    } finally {
+      setRegistrationLoading(false);
+    }
+  };
+
+  // Handle initial registration button click
+  const registerForEvent = async () => {
+    if (!event) return;
+    if (!user) {
+      // Redirect to login if user is not authenticated
+      navigate("/signin", { state: { redirect: `/det/${eventId}` } });
+      return;
+    }
+
+    // Don't proceed if already registered
+    if (isUserRegistered) {
+      return;
+    }
+
+    try {
+      if (event.isFree) {
+        // For free events, create the ticket immediately
+        await processTicketCreation();
+      } else {
+        // For paid events, show the payment page first
+        console.log("Showing payment page for paid event");
+        setShowPaymentPage(true);
+      }
+    } catch (err: any) {
+      console.error("Error during registration process:", err);
+      setRegistrationError(
+        err.message || "Failed to register for this event. Please try again."
+      );
+    }
+  };
+
+  // Handle successful payment (for paid events)
+  const handlePaymentSuccess = async () => {
+    // Only create the ticket after successful payment
+    try {
+      await processTicketCreation();
+      setShowPaymentPage(false);
+    } catch (err: any) {
+      console.error("Error after payment:", err);
+      setRegistrationError(
+        err.message ||
+          "Payment was successful, but we couldn't complete registration. Please contact support."
+      );
     }
   };
 
@@ -162,6 +308,7 @@ const EventDetail: React.FC = () => {
         eventName={event.name}
         eventPrice={event.price || 0}
         onCancel={() => setShowPaymentPage(false)}
+        onSuccess={handlePaymentSuccess}
       />
     );
   }
@@ -214,12 +361,89 @@ const EventDetail: React.FC = () => {
     }
   };
 
+  // Render the appropriate registration button based on user registration status
+  const renderRegistrationButton = () => {
+    if (isUserRegistered) {
+      return (
+        <div className="w-full mt-6 px-6 py-3 bg-green-500 text-white font-medium rounded-lg text-center">
+          You're Registered ✓
+        </div>
+      );
+    } else if (remainingSpots <= 0) {
+      return (
+        <div className="w-full mt-6 px-6 py-3 bg-gray-400 text-white font-medium rounded-lg text-center cursor-not-allowed">
+          Event Full
+        </div>
+      );
+    } else {
+      return (
+        <button
+          onClick={registerForEvent}
+          disabled={registrationLoading}
+          className={`w-full mt-6 px-6 py-3 ${
+            registrationLoading
+              ? "bg-gray-400"
+              : "bg-[#49475B] hover:bg-gray-500"
+          } text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#49475B]`}
+        >
+          {registrationLoading ? (
+            <span className="flex items-center justify-center">
+              <svg
+                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Processing...
+            </span>
+          ) : event.isFree ? (
+            "Register for Free"
+          ) : (
+            `Register Now • $${event.price}`
+          )}
+        </button>
+      );
+    }
+  };
+
   return (
     <>
       <div className="max-w-6xl mx-auto mt-30 px-4 pb-16 relative z-10">
+        {/* Manage Attendees Modal */}
+        {event && (
+          <ManageAttendeesModal
+            isOpen={showManageAttendeesModal}
+            onClose={() => setShowManageAttendeesModal(false)}
+            eventId={event.id}
+            attendees={event.attendees || []}
+            sponsors={event.sponsors || []}
+            onRemoveUsers={handleRemoveUsers}
+          />
+        )}
         {/* Admin Action Bar - Only shown to event admins */}
         {isEventAdmin && (
-          <div className="bg-gray-200 p-4 mb-6 rounded-md flex justify-end items-center">
+          <div className="bg-gray-200 p-4 mb-6 rounded-md flex justify-end items-center space-x-4">
+            <button
+              onClick={handleManageAttendeesClick}
+              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              <UserGroupIcon className="h-5 w-5 mr-2" />
+              Manage Attendees
+            </button>
             <button
               onClick={handleEditClick}
               className="flex items-center px-4 py-2 bg-[#655967] text-white rounded-md hover:bg-gray-700 transition-colors"
@@ -315,7 +539,7 @@ const EventDetail: React.FC = () => {
                     </pre>
                   </div>
 
-                  <div className="w-full bg-white dark:bg-gray-700 rounded-lg shadow-lg overflow-hidden mt-4">
+                  <div className="w-full bg-white dark:bg-gray-700 rounded-lg shadow-lg overflow-hidden mt-4 mb-8">
                     <div className="max-w-3xl mx-auto px-3 py-3">
                       <div className="flex flex-col items-left space-y-3">
                         <h3 className="text-lg font-bold text-gray-800 dark:text-white">
@@ -669,18 +893,18 @@ const EventDetail: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Registration button */}
-                  <button
-                    onClick={registerForEvent}
-                    className="w-full mt-6 px-6 py-3 bg-[#49475B] text-white font-medium rounded-lg hover:bg-gray-500 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#49475B]"
-                  >
-                    {event.isFree
-                      ? "Register for Free"
-                      : `Register Now • $${event.price}`}
-                  </button>
+                  {/* Registration error message */}
+                  {registrationError && (
+                    <div className="mt-4 p-3 bg-red-100 border-l-4 border-red-500 text-red-700 rounded">
+                      {registrationError}
+                    </div>
+                  )}
 
-                  {/* Render PaymentSuccess for free events */}
-                  {event.isFree && showPaymentSuccess && (
+                  {/* Registration button - using the render function */}
+                  {renderRegistrationButton()}
+
+                  {/* Render PaymentSuccess for events */}
+                  {showPaymentSuccess && (
                     <PaymentSuccess
                       eventName={event.name}
                       isVisible={showPaymentSuccess}
@@ -688,12 +912,13 @@ const EventDetail: React.FC = () => {
                     />
                   )}
 
-                  {isNearlyFull && (
+                  {isNearlyFull && !isUserRegistered && remainingSpots > 0 && (
                     <p className="text-center text-sm text-red-500 dark:text-red-400 mt-2">
                       Almost sold out! Register soon.
                     </p>
                   )}
                 </div>
+
                 <div className="w-full bg-white dark:bg-gray-700 rounded-lg shadow-xl overflow-hidden mt-12">
                   <div className="max-w-4xl mx-auto px-6 py-6">
                     <div className="flex flex-col items-center space-y-4">
@@ -739,6 +964,7 @@ const EventDetail: React.FC = () => {
                     </div>
                   </div>
                 </div>
+
                 <div className="w-full bg-white dark:bg-gray-700 rounded-lg shadow-xl overflow-hidden mt-6">
                   <div className="max-w-4xl mx-auto px-6 py-6">
                     <div className="flex flex-col items-center space-y-4">

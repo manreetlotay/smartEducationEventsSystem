@@ -127,7 +127,7 @@ const EventsPage: React.FC = () => {
           </div>
         )}
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };

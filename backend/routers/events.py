@@ -1,10 +1,11 @@
-from typing import Annotated
-from fastapi import APIRouter, HTTPException, Query
+from typing import Annotated, List
+from fastapi import APIRouter, HTTPException, Query, Body
 from sqlmodel import select
 from db_session import SessionDep
 from models.event import Event, DbEvent, EventPublic
-from models.ticket import DbTicket, UserRole
+from models.ticket import DbTicket, TicketPublic, UserRole
 from models.user import DbUser, UserPublic
+from pydantic import BaseModel
 
 router = APIRouter(prefix="/events", tags=["Events"])
 
@@ -74,7 +75,6 @@ def users(
     return users
 
 
-
 @router.get("/{event_id}/organizers", response_model=list[UserPublic])
 def organizers(
     event_id: int,
@@ -83,8 +83,8 @@ def organizers(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.ORGANIZER)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.ORGANIZER)
     )
     users = session.exec(query).all()
     return users
@@ -98,8 +98,8 @@ def attendees(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.ATTENDEE)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.ATTENDEE)
     )
     users = session.exec(query).all()
     return users
@@ -113,8 +113,8 @@ def speakers(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.SPEAKER)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.SPEAKER)
     )
     users = session.exec(query).all()
     return users
@@ -128,8 +128,8 @@ def sponsors(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.SPONSOR)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.SPONSOR)
     )
     users = session.exec(query).all()
     return users
@@ -143,8 +143,8 @@ def stakeholders(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.STAKEHOLDER)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.STAKEHOLDER)
     )
     users = session.exec(query).all()
     return users
@@ -158,8 +158,121 @@ def eventAdmins(
     query = (
         select(DbUser)
         .join(DbTicket, DbUser.id == DbTicket.user_id)
-        .where(DbTicket.event_id == event_id and
-               DbTicket.role == UserRole.EVENT_ADMIN)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.EVENT_ADMIN)
     )
     users = session.exec(query).all()
     return users
+
+
+router.get("/tickets/{event_id}/users", response_model=list[TicketPublic])
+def user_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/organizers", response_model=list[TicketPublic])
+def organizer_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.ORGANIZER)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/attendees", response_model=list[TicketPublic])
+def attendee_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.ATTENDEE)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/speakers", response_model=list[TicketPublic])
+def speaker_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.SPEAKER)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/sponsors", response_model=list[TicketPublic])
+def sponsor_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.SPONSOR)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/stakeholders", response_model=list[TicketPublic])
+def stakeholder_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.STAKEHOLDER)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.get("/tickets/{event_id}/eventAdmins", response_model=list[TicketPublic])
+def eventAdmin_tickets(
+    event_id: int,
+    session: SessionDep,
+):
+    query = (
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.role == UserRole.EVENT_ADMIN)
+    )
+    tickets = session.exec(query).all()
+    return tickets
+
+
+@router.delete("/tickets/{event_id}/{user_id}", response_model=TicketPublic)
+def delete_attendee_ticket(event_id: int, user_id: int, session: SessionDep):
+    ticket = session.exec(
+        select(DbTicket)
+        .where(DbTicket.event_id == event_id)
+        .where(DbTicket.user_id == user_id)
+        .where(DbTicket.role == UserRole.ATTENDEE)
+    ).first()
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Attendee ticket not found")
+    
+    session.delete(ticket)
+    session.commit()
+    return ticket

@@ -5,23 +5,28 @@ import EventCard from "../eventBrowsing/EventCard";
 import { useEventContext } from "../../../lib/context/EventContext";
 import { PencilSquareIcon } from "@heroicons/react/20/solid";
 import Footer from "../../footer/Footer";
+import { useAuth } from "../../../lib/hooks/useAuth";
 
 const MyEventsPage: React.FC = () => {
   const navigate = useNavigate();
   const { events, loading: contextLoading } = useEventContext();
   const [myEvents, setMyEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
-  // For testing, assume the logged-in user is admin1
-  const currentUserId = "admin1";
+  const currentUserId = user?.id;
 
   // Filter events where the current user is the admin
   useEffect(() => {
-    if (events.length > 0) {
+    if (events.length > 0 && user) {
       const filteredEvents = events.filter(
-        (event) => event.eventAdmin.id === currentUserId
+        (event) => String(event.eventAdmin.id) === String(currentUserId)
       );
       setMyEvents(filteredEvents);
+      console.log(
+        "filtered events those that linda is admin of",
+        filteredEvents
+      );
       setLoading(false);
     } else if (!contextLoading) {
       // If context finished loading but no events found
@@ -53,8 +58,8 @@ const MyEventsPage: React.FC = () => {
           <div>
             <div className="bg-violet-50 border-l-4 border-gray-500 p-4 mb-6 ">
               <p className="text-gray-700">
-                Manage your events here. Click on any event to edit details, view
-                attendees, or make updates.
+                Manage your events here. Click on any event to edit details,
+                view attendees, or make updates.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -82,14 +87,14 @@ const MyEventsPage: React.FC = () => {
               You haven't created any events yet
             </h2>
             <p className="text-gray-600 mb-6">
-              Begin now by creating your first event. As an admin, you'll be able
-              to manage attendees, edit event details, and get insights after the
-              event.
+              Begin now by creating your first event. As an admin, you'll be
+              able to manage attendees, edit event details, and get insights
+              after the event.
             </p>
           </div>
         )}
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 };
