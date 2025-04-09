@@ -12,7 +12,7 @@ interface CreateEventProps {
 const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
-  const { getEventById } = useEventContext();
+  const { getEventById, updateEvent, createEvent } = useEventContext();
   const { user } = useAuth();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -180,27 +180,81 @@ const CreateEvent: React.FC<CreateEventProps> = ({ mode = "create" }) => {
         throw new Error("Price must be greater than 0 for paid events");
       }
 
-      // In a real application, you would send the event data and the emails to the backend
+      // Prepare the event data for submission
+      const eventData: Event = {
+        ...(event as Event),
+        // Ensure we have an ID (will be overwritten by backend for new events)
+        id: mode === "edit" && eventId ? eventId : "temp-id",
+        // Set the current user as the event admin
+        eventAdmin: user || {
+          id: "0",
+          email: "",
+          password: "",
+          phoneNumber: "",
+          profileImage: "",
+          userType: "individual",
+          points: 0,
+          firstName: "",
+          lastName: "",
+          organizationName: "",
+          organizationAddress: "",
+          is_site_admin: false,
+        },
+        // Initialize empty arrays for the various participants
+        // These will be handled separately by the backend through tickets
+        organizers: [],
+        sponsors: [],
+        speakers: [],
+        attendees: [],
+        stakeholders: [],
+      };
+
+      // Log for debugging
       console.log("Submitting event:", {
-        ...event,
+        ...eventData,
         organizerEmails,
         speakerEmails,
         sponsorEmails,
         stakeholderEmails,
       });
 
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      let resultEventId: string;
+      
+      if (mode === "edit" && eventId) {
+        // Update existing event
+        await updateEvent(eventId, eventData);
+        resultEventId = eventId;
+      } else {
+        // Create new event
+        const createdEvent = await createEvent(eventData);
+        resultEventId = createdEvent.id;
+        
+        // Create tickets for all the participant emails
+        try {
+          await createTicketsForEvent(
+            resultEventId, 
+            organizerEmails, 
+            speakerEmails, 
+            sponsorEmails, 
+            stakeholderEmails
+          );
+        } catch (ticketError) {
+          console.error("Error creating tickets:", ticketError);
+          // We don't throw here to avoid blocking navigation if ticket creation fails
+          // Instead, we log the error and continue
+        }
+      }
 
       // Navigate to the my events page after successful submission
       navigate("/myevents");
     } catch (error) {
-      console.error("Error creating event:", error);
+      console.error("Error creating/updating event:", error);
       setError(
         `${
           error instanceof Error ? error.message : "An unknown error occurred"
         }`
       );
+    } finally {
       setIsSubmitting(false);
     }
   };

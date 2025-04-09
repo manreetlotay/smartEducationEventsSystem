@@ -66,6 +66,7 @@ interface EventContextType {
   fetchEvents: () => Promise<void>;
   getEventById: (id: string) => Event | undefined;
   updateEvent: (id: string, updatedEvent: Event) => Promise<void>;
+  createEvent: (newEvent: Event) => Promise<Event>;
 }
 
 // Create the context with default values
@@ -78,6 +79,12 @@ const EventContext = createContext<EventContextType>({
   fetchEvents: async () => {},
   getEventById: () => undefined,
   updateEvent: async () => {},
+  createEvent: async () => {
+    // Default empty implementation
+    // This should never be called directly without the provider
+    console.warn("createEvent called without provider");
+    throw new Error("createEvent not implemented in context");
+  },
 });
 
 // Helper function to convert backend event format to frontend format
@@ -385,6 +392,47 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
     }
   };
 
+  const createEvent = async (newEvent: Event): Promise<Event> => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Convert from frontend to backend format
+      const backendEvent = mapFrontendEventToBackend(newEvent);
+      
+      console.log("Creating new event with data:", backendEvent);
+      
+      const response = await fetch(`${API_BASE_URL}/events`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(backendEvent),
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Failed to create event: ${response.status}`, errorText);
+        throw new Error(`Failed to create event: ${response.status}`);
+      }
+      
+      // Parse the response to get the created event
+      const createdEvent = await response.json();
+      const frontendEvent = mapBackendEventToFrontend(createdEvent);
+      
+      // Update the events list with the new event
+      setEvents(prevEvents => [...prevEvents, frontendEvent]);
+      
+      return frontendEvent;
+    } catch (err: any) {
+      setError(`Failed to create event: ${err.message}`);
+      console.error("Error creating event:", err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Initial fetch on mount
   useEffect(() => {
     fetchEvents();
@@ -399,6 +447,7 @@ export const EventProvider: React.FC<EventProviderProps> = ({ children }) => {
     fetchEvents,
     getEventById,
     updateEvent,
+    createEvent,
   };
 
   return (
