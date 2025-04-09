@@ -146,15 +146,16 @@ def generate_mock_data():
             DbUser.email == "karl@e.com")).first()
         
 
+    # event that already passed
     e1 = DbEvent(
         name="Annual Tech Conference 2025",
         description="Join us for three days of inspiring talks and workshops on the latest technology trends and innovations. Network with industry leaders and gain insights into cutting-edge developments.",
         event_format="hybrid",
-        start_date=dt.datetime.now() + dt.timedelta(days=30),
-        end_date=dt.datetime.now() + dt.timedelta(days=31),
+        start_date=dt.datetime.now() - dt.timedelta(days=30),
+        end_date=dt.datetime.now() - dt.timedelta(days=31),
         tags=["technology", "conference", "networking", "innovation"],
         capacity=100,
-        registration_deadline=dt.datetime.now() + dt.timedelta(days=10),
+        registration_deadline=dt.datetime.now() - dt.timedelta(days=35),
         address="123 Tech Boulevard, San Francisco, CA 94105",
         virtual_link="https://virtual-conference-platform.com/tech2025",
         is_free=True,
@@ -331,7 +332,7 @@ def generate_mock_data():
         session.add(karl_speaker_ticket)
         session.add(rache_organizer_ticket)
         session.add(linda_stakeholder_ticket)
-        session.add(linda_sponsor_ticket)
+        # session.add(linda_sponsor_ticket)
         session.add(karl_organizer_ticket)
         session.add(linda_speaker_ticket)
         session.add(rache_org_ticket)

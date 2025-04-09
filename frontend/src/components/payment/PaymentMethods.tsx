@@ -1,6 +1,7 @@
 // PaymentMethods.tsx
-import React from "react";
+import React, { useEffect } from "react";
 import { CreditCard, Wallet, Building, Gift } from "lucide-react";
+import { useAuth } from "../../lib/hooks/useAuth";
 
 interface PaymentMethodsProps {
   selectedMethod: string;
@@ -11,6 +12,11 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
   selectedMethod,
   onMethodChange,
 }) => {
+  const { user } = useAuth();
+
+  // Check if user has enough points
+  const hasEnoughPoints = user && user.points >= 500;
+
   const methods = [
     {
       id: "credit-card",
@@ -27,12 +33,22 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
       name: "Bank Transfer",
       icon: <Building className="h-5 w-5" />,
     },
-    {
-      id: "points",
-      name: "Pay with Points",
-      icon: <Gift className="h-5 w-5" />,
-    },
+    ...(hasEnoughPoints
+      ? [
+          {
+            id: "points",
+            name: "Pay with Points",
+            icon: <Gift className="h-5 w-5" />,
+          },
+        ]
+      : []),
   ];
+
+  useEffect(() => {
+    if (selectedMethod === "points" && !hasEnoughPoints) {
+      onMethodChange("credit-card");
+    }
+  }, [hasEnoughPoints, selectedMethod, onMethodChange]);
 
   return (
     <div className="mb-6">
@@ -72,6 +88,12 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
           </button>
         ))}
       </div>
+      {/* Optional: Add a helpful message if points are insufficient */}
+      {!hasEnoughPoints && (
+        <p className="text-sm text-gray-500 mt-2">
+          You need at least 500 points to use the "Pay with Points" option.
+        </p>
+      )}
     </div>
   );
 };
