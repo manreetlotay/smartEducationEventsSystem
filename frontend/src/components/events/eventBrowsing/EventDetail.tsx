@@ -13,7 +13,10 @@ import { Instagram, Facebook, Linkedin } from "lucide-react";
 import { useAuth } from "../../../lib/hooks/useAuth";
 import { UserGroupIcon } from "@heroicons/react/20/solid";
 import ManageAttendeesModal from "./attendeeManagement/AttendeeManagement";
-import { removeUsersFromEvent, deleteAttendeeTicket } from "../../../lib/services/eventService";
+import {
+  removeUsersFromEvent,
+  deleteAttendeeTicket,
+} from "../../../lib/services/eventService";
 
 const EventDetail: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -31,10 +34,11 @@ const EventDetail: React.FC = () => {
   const [registrationLoading, setRegistrationLoading] = useState(false);
   const [registrationError, setRegistrationError] = useState("");
   const [isUserRegistered, setIsUserRegistered] = useState(false);
-  const [showManageAttendeesModal, setShowManageAttendeesModal] = useState<boolean>(false);
+  const [showManageAttendeesModal, setShowManageAttendeesModal] =
+    useState<boolean>(false);
+  const [isEventPast, setIsEventPast] = useState(false);
 
   const API_BASE_URL = "http://localhost:8000";
-  
 
   // Check if current user is the admin of this event
   const isEventAdmin =
@@ -51,14 +55,19 @@ const EventDetail: React.FC = () => {
   };
 
   // Handle removing users from event
-  const handleRemoveUsers = async (userIds: string[], role: USER_ROLE): Promise<boolean> => {
+  const handleRemoveUsers = async (
+    userIds: string[],
+    role: USER_ROLE
+  ): Promise<boolean> => {
     if (!event) return false;
-  
+
     if (role !== USER_ROLE.ATTENDEE) {
-      console.error("Only attendee removal is supported in this implementation.");
+      console.error(
+        "Only attendee removal is supported in this implementation."
+      );
       return false;
     }
-  
+
     try {
       // Remove the attendee ticket for each selected user
       await Promise.all(
@@ -66,20 +75,20 @@ const EventDetail: React.FC = () => {
           await deleteAttendeeTicket(event.id.toString(), userId);
         })
       );
-  
+
       // Update the local event state to remove the deleted attendees
       const updatedAttendees = (event.attendees || []).filter(
         (attendee) => !userIds.includes(attendee.id)
       );
       // Update the event state so the modal gets the refreshed list
       setEvent({ ...event, attendees: updatedAttendees });
-  
+
       return true;
     } catch (error) {
       console.error("Error removing attendee tickets:", error);
       throw error;
     }
-  };  
+  };
 
   // Check if user is already registered for this event using TicketContext
   useEffect(() => {
@@ -156,6 +165,13 @@ const EventDetail: React.FC = () => {
 
     fetchEventDetail();
   }, [eventId, location.state, getEventById, fetchEvents]);
+
+  useEffect(() => {
+    if (event) {
+      const currentDate = new Date();
+      setIsEventPast(event.endDate < currentDate);
+    }
+  }, [event]);
 
   const formatDateTime = (date: Date) => {
     return new Intl.DateTimeFormat("en-US", {
@@ -363,6 +379,14 @@ const EventDetail: React.FC = () => {
 
   // Render the appropriate registration button based on user registration status
   const renderRegistrationButton = () => {
+    if (isEventPast) {
+      return (
+        <div className="w-full mt-6 px-6 py-3 bg-gray-400 text-white font-medium rounded-lg text-center cursor-not-allowed">
+          Event Has Ended
+        </div>
+      );
+    }
+
     if (isUserRegistered) {
       return (
         <div className="w-full mt-6 px-6 py-3 bg-green-500 text-white font-medium rounded-lg text-center">
@@ -379,14 +403,16 @@ const EventDetail: React.FC = () => {
       return (
         <button
           onClick={registerForEvent}
-          disabled={registrationLoading}
+          disabled={registrationLoading || isEventPast}
           className={`w-full mt-6 px-6 py-3 ${
-            registrationLoading
+            registrationLoading || isEventPast
               ? "bg-gray-400"
               : "bg-[#49475B] hover:bg-gray-500"
           } text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#49475B]`}
         >
-          {registrationLoading ? (
+          {isEventPast ? (
+            "Event Ended"
+          ) : registrationLoading ? (
             <span className="flex items-center justify-center">
               <svg
                 className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
