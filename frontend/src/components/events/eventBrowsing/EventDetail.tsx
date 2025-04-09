@@ -977,7 +977,7 @@ const EventDetail: React.FC = () => {
                       </p>
 
                       <a
-                        href="https://discord.gg/example"
+                        href="https://discord.gg/vrSj9ptDwB"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full max-w-md px-6 py-3 bg-[#5865F2] text-white font-medium rounded-lg hover:bg-[#4752C4] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5865F2] flex items-center justify-center"
