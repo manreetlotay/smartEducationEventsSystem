@@ -60,28 +60,26 @@ const EventDetail: React.FC = () => {
     }
   
     try {
-      // Remove each attendee ticket by calling deleteAttendeeTicket in parallel.
+      // Remove the attendee ticket for each selected user
       await Promise.all(
         userIds.map(async (userId) => {
           await deleteAttendeeTicket(event.id.toString(), userId);
         })
       );
   
-      // Force a refresh of event data after ticket deletion.
-      await fetchEvents();
-      const refreshedEvent = getEventById(eventId || "");
-      if (refreshedEvent) {
-        setEvent(refreshedEvent);
-        return true;
-      } else {
-        console.error("EventDetail: Could not refresh event with ID:", eventId);
-        return false;
-      }
+      // Update the local event state to remove the deleted attendees
+      const updatedAttendees = (event.attendees || []).filter(
+        (attendee) => !userIds.includes(attendee.id)
+      );
+      // Update the event state so the modal gets the refreshed list
+      setEvent({ ...event, attendees: updatedAttendees });
+  
+      return true;
     } catch (error) {
-      console.error("EventDetail: Error removing attendee tickets:", error);
+      console.error("Error removing attendee tickets:", error);
       throw error;
     }
-  };
+  };  
 
   // Check if user is already registered for this event using TicketContext
   useEffect(() => {

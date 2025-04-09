@@ -65,9 +65,7 @@ const ManageAttendeesModal: React.FC<ManageAttendeesModalProps> = ({
         userType === "attendees" ? USER_ROLE.ATTENDEE : USER_ROLE.SPONSOR
       );
       if (success) {
-        // Clear selections and close the modal to trigger a UI refresh
         setSelectedUsers([]);
-        onClose();
       }
     } catch (error) {
       console.error("Error when removing users:", error);
