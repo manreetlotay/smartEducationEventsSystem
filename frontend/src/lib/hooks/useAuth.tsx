@@ -6,6 +6,7 @@ import {
   RegisterOrganizationUser,
 } from "../types/Auth";
 import { User } from "../types/User";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = "http://localhost:8000";
 
