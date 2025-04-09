@@ -35,6 +35,7 @@ const TicketsPage: React.FC = () => {
       return {
         ...ticket,
         eventName: event ? event.name : `Event ${ticket.eventId}`,
+        eventEndDate: event ? event.endDate : new Date(),
       };
     });
   };
@@ -134,6 +135,7 @@ const TicketsPage: React.FC = () => {
                       <TicketCard
                         ticket={ticket}
                         eventName={ticket.eventName}
+                        eventEndDate={ticket.eventEndDate}
                       />
                     </div>
                   ))}
