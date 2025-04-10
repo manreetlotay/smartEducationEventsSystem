@@ -5,7 +5,6 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 partial struct EnemySystem : ISystem
 {
@@ -17,7 +16,7 @@ partial struct EnemySystem : ISystem
         
     }
 
-    //[BurstCompile]
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         entityManager = state.EntityManager;

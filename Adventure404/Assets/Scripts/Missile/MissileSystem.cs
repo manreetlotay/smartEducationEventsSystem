@@ -20,32 +20,25 @@ partial struct MissileSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        // Get ECB system
         var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-        // Create command buffer properly
         var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged);
 
-        // Get time once
         float deltaTime = SystemAPI.Time.DeltaTime;
 
-        // Cache missile stats
         float missileSpeed = 0f;
         if (SystemAPI.HasSingleton<MissileStatsComponent>())
         {
             missileSpeed = SystemAPI.GetSingleton<MissileStatsComponent>().Speed;
         }
 
-        // Use SystemAPI.Query instead of manual entity iteration
         foreach (var (missileTransform, missileComponent, entity) in
                  SystemAPI.Query<RefRW<LocalTransform>, RefRW<MissileComponent>>()
                          .WithEntityAccess())
         {
             Entity closestEnemy = FindClosestEnemy(ref state, missileTransform.ValueRO.Position);
 
-            // Update target
             missileComponent.ValueRW.Target = closestEnemy;
 
-            // If no valid target, just continue
             if (closestEnemy == Entity.Null)
             {
                 continue;
@@ -59,13 +52,11 @@ partial struct MissileSystem : ISystem
 
                 if (math.length(distance) < 0.5f)
                 {
-                    // Collision detected
                     ecb.DestroyEntity(closestEnemy);
                     ecb.DestroyEntity(entity);
                 }
                 else
                 {
-                    // Move missile
                     float3 direction = math.normalize(distance);
                     missileTransform.ValueRW.Position += direction * missileSpeed * deltaTime;
                 }
