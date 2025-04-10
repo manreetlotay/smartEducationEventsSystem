@@ -47,6 +47,9 @@ TagManager:
   - name: Grass
     uniqueID: 4211361101
     locked: 0
+  - name: Blood
+    uniqueID: 3366645019
+    locked: 0
   - name: Characters
     uniqueID: 166429703
     locked: 0

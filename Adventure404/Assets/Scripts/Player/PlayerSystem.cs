@@ -21,7 +21,6 @@ public partial struct PlayerSystem : ISystem
         playerComponent = entityManager.GetComponentData<PlayerComponent>(player);
         inputComponent = entityManager.GetComponentData<InputComponent>(input);
 
-
         Move(ref state);
     }
 
