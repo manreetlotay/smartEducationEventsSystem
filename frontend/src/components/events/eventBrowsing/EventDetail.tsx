@@ -13,7 +13,10 @@ import { Instagram, Facebook, Linkedin } from "lucide-react";
 import { useAuth } from "../../../lib/hooks/useAuth";
 import { UserGroupIcon } from "@heroicons/react/20/solid";
 import ManageAttendeesModal from "./attendeeManagement/AttendeeManagement";
-import { removeUsersFromEvent, deleteAttendeeTicket } from "../../../lib/services/eventService";
+import {
+  removeUsersFromEvent,
+  deleteAttendeeTicket,
+} from "../../../lib/services/eventService";
 
 const EventDetail: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
@@ -31,14 +34,58 @@ const EventDetail: React.FC = () => {
   const [registrationLoading, setRegistrationLoading] = useState(false);
   const [registrationError, setRegistrationError] = useState("");
   const [isUserRegistered, setIsUserRegistered] = useState(false);
-  const [showManageAttendeesModal, setShowManageAttendeesModal] = useState<boolean>(false);
+  const [showManageAttendeesModal, setShowManageAttendeesModal] =
+    useState<boolean>(false);
+  const [isEventPast, setIsEventPast] = useState(false);
+
+  //states for email promotion
+  const [showPromoteModal, setShowPromoteModal] = useState(false);
+  const [promotionEmail, setPromotionEmail] = useState("");
+  const [promotionError, setPromotionError] = useState("");
+  const [isPromotionSending, setIsPromotionSending] = useState(false);
 
   const API_BASE_URL = "http://localhost:8000";
-  
 
   // Check if current user is the admin of this event
   const isEventAdmin =
     event && user && String(event.eventAdmin.id) === String(user.id);
+
+  // Email validation function
+  const validateEmail = (email: string) => {
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(String(email).toLowerCase());
+  };
+
+  // Handle email promotion
+  const handlePromoteEvent = async () => {
+    // Reset previous errors
+    setPromotionError("");
+
+    // Validate email
+    if (!validateEmail(promotionEmail)) {
+      setPromotionError("Please enter a valid email address");
+      return;
+    }
+
+    try {
+      setIsPromotionSending(true);
+
+      // Simulate sending process
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // Show success message
+      alert(`Email "sent" to ${promotionEmail}!`);
+
+      // Close modal and reset email
+      setShowPromoteModal(false);
+      setPromotionEmail("");
+    } catch (error) {
+      console.error("Promotion error:", error);
+      setPromotionError("An error occurred");
+    } finally {
+      setIsPromotionSending(false);
+    }
+  };
 
   // Handle edit button click
   const handleEditClick = () => {
@@ -51,14 +98,19 @@ const EventDetail: React.FC = () => {
   };
 
   // Handle removing users from event
-  const handleRemoveUsers = async (userIds: string[], role: USER_ROLE): Promise<boolean> => {
+  const handleRemoveUsers = async (
+    userIds: string[],
+    role: USER_ROLE
+  ): Promise<boolean> => {
     if (!event) return false;
-  
+
     if (role !== USER_ROLE.ATTENDEE) {
-      console.error("Only attendee removal is supported in this implementation.");
+      console.error(
+        "Only attendee removal is supported in this implementation."
+      );
       return false;
     }
-  
+
     try {
       // Remove the attendee ticket for each selected user
       await Promise.all(
@@ -66,20 +118,20 @@ const EventDetail: React.FC = () => {
           await deleteAttendeeTicket(event.id.toString(), userId);
         })
       );
-  
+
       // Update the local event state to remove the deleted attendees
       const updatedAttendees = (event.attendees || []).filter(
         (attendee) => !userIds.includes(attendee.id)
       );
       // Update the event state so the modal gets the refreshed list
       setEvent({ ...event, attendees: updatedAttendees });
-  
+
       return true;
     } catch (error) {
       console.error("Error removing attendee tickets:", error);
       throw error;
     }
-  };  
+  };
 
   // Check if user is already registered for this event using TicketContext
   useEffect(() => {
@@ -156,6 +208,13 @@ const EventDetail: React.FC = () => {
 
     fetchEventDetail();
   }, [eventId, location.state, getEventById, fetchEvents]);
+
+  useEffect(() => {
+    if (event) {
+      const currentDate = new Date();
+      setIsEventPast(event.endDate < currentDate);
+    }
+  }, [event]);
 
   const formatDateTime = (date: Date) => {
     return new Intl.DateTimeFormat("en-US", {
@@ -245,6 +304,49 @@ const EventDetail: React.FC = () => {
       );
     }
   };
+
+  // Promotion Modal Component
+  const PromotionModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center min-h-screen overflow-y-auto p-4">
+      <div className="bg-white rounded-lg p-6 w-96 my-auto">
+        <h2 className="text-xl font-bold mb-4">Share The Event!</h2>
+
+        {promotionError && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+            {promotionError}
+          </div>
+        )}
+
+        <input
+          type="email"
+          value={promotionEmail}
+          onChange={(e) => setPromotionEmail(e.target.value)}
+          placeholder="Enter recipient's email"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md mb-4"
+        />
+
+        <div className="flex justify-end space-x-2">
+          <button
+            onClick={() => setShowPromoteModal(false)}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handlePromoteEvent}
+            disabled={isPromotionSending}
+            className={`px-4 py-2 ${
+              isPromotionSending
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#49475B] text-white hover:bg-gray-700"
+            } rounded-md`}
+          >
+            {isPromotionSending ? "Sending..." : "Send"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   // Render user card based on user type
   const renderUserCard = (user: User) => {
@@ -363,6 +465,14 @@ const EventDetail: React.FC = () => {
 
   // Render the appropriate registration button based on user registration status
   const renderRegistrationButton = () => {
+    if (isEventPast) {
+      return (
+        <div className="w-full mt-6 px-6 py-3 bg-gray-400 text-white font-medium rounded-lg text-center cursor-not-allowed">
+          Event Has Ended
+        </div>
+      );
+    }
+
     if (isUserRegistered) {
       return (
         <div className="w-full mt-6 px-6 py-3 bg-green-500 text-white font-medium rounded-lg text-center">
@@ -379,14 +489,16 @@ const EventDetail: React.FC = () => {
       return (
         <button
           onClick={registerForEvent}
-          disabled={registrationLoading}
+          disabled={registrationLoading || isEventPast}
           className={`w-full mt-6 px-6 py-3 ${
-            registrationLoading
+            registrationLoading || isEventPast
               ? "bg-gray-400"
               : "bg-[#49475B] hover:bg-gray-500"
           } text-white font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#49475B]`}
         >
-          {registrationLoading ? (
+          {isEventPast ? (
+            "Event Ended"
+          ) : registrationLoading ? (
             <span className="flex items-center justify-center">
               <svg
                 className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
@@ -931,9 +1043,13 @@ const EventDetail: React.FC = () => {
                         word
                       </p>
 
-                      <button className="w-full max-w-md px-6 py-3 bg-[#49475B] text-white font-medium rounded-lg hover:bg-gray-500 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#49475B]">
+                      <button
+                        onClick={() => setShowPromoteModal(true)}
+                        className="w-full max-w-md px-6 py-3 bg-[#49475B] text-white font-medium rounded-lg hover:bg-gray-500 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#49475B]"
+                      >
                         Promote Now!
                       </button>
+                      {showPromoteModal && <PromotionModal />}
 
                       <div className="flex justify-center space-x-4">
                         <a

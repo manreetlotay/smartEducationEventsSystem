@@ -24,6 +24,7 @@ import {
   CalendarIcon,
 } from "@heroicons/react/20/solid";
 import { useAuth } from "../../../lib/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const actionItems = [
   {
@@ -49,6 +50,7 @@ const callsToActionWhenNoUser = [
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   // callsToAction for no logged in user
   const callsToActionWhenUser = [
@@ -59,6 +61,7 @@ export default function Navbar() {
       onClick: async (e: MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         await signOut();
+        navigate("/");
       },
     },
   ];

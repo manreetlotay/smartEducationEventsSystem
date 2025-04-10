@@ -4,9 +4,14 @@ import { Ticket, USER_ROLE } from "../../lib/types/Ticket";
 interface TicketCardProps {
   ticket: Ticket;
   eventName: string;
+  eventEndDate: Date;
 }
 
-const TicketCard: React.FC<TicketCardProps> = ({ ticket, eventName }) => {
+const TicketCard: React.FC<TicketCardProps> = ({
+  ticket,
+  eventName,
+  eventEndDate,
+}) => {
   const roleColors = {
     [USER_ROLE.ORGANIZER]: "bg-purple-100 text-purple-800",
     [USER_ROLE.ATTENDEE]: "bg-blue-100 text-blue-800",
@@ -24,6 +29,8 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket, eventName }) => {
       year: "numeric",
     });
   };
+
+  const isEventPast = new Date() > new Date(eventEndDate);
 
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200">
@@ -76,6 +83,18 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket, eventName }) => {
                 className="block w-full text-center bg-indigo-100 text-indigo-700 py-2 rounded font-medium hover:bg-indigo-200 transition-colors"
               >
                 Join Virtual Event
+              </a>
+            </div>
+          )}
+
+          {/* New section for post-event link */}
+          {isEventPast && (
+            <div className="mt-3">
+              <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLSco6Sv2Vfzi54kQR9X-arvFA8UBAIT12gEABd3oxrm7Y9-NyA/viewform?usp=sharing" // Replace with actual resource link
+                className="block w-full text-center bg-green-100 text-green-700 py-2 rounded font-medium hover:bg-green-200 transition-colors"
+              >
+                Access Post-Event Survey
               </a>
             </div>
           )}
