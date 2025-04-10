@@ -7,6 +7,7 @@ public class PlayerAuthoring : MonoBehaviour
 {
     public float MoveSpeed = 1f;
     public GameObject MissilePrefab;
+    public int Coins = 0;
 
     public class PlayerBaker : Baker<PlayerAuthoring>
     {
@@ -16,7 +17,8 @@ public class PlayerAuthoring : MonoBehaviour
             AddComponent(player, new PlayerComponent
             {
                 MoveSpeed = authoring.MoveSpeed,
-                MissilePrefab = GetEntity(authoring.MissilePrefab, TransformUsageFlags.None)
+                MissilePrefab = GetEntity(authoring.MissilePrefab, TransformUsageFlags.None),
+                Coins = authoring.Coins
             });
         }
     }
