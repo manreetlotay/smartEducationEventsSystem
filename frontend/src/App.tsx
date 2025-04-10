@@ -13,6 +13,7 @@ import CreateEvent from "./components/events/eventPlanning/CreateEvent";
 import { AuthProvider } from "./lib/hooks/useAuth";
 import Navbar from "./components/header/navbar/Navbar";
 import MyTicketsPage from "./views/MyTicketsPage";
+import NotFoundPage from "./views/NotFoundPage";
 
 function App() {
   return (
@@ -43,6 +44,8 @@ function App() {
                     </>
                   }
                 />
+                {/* Catch-all route */}
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </Router>
           </TicketProvider>
