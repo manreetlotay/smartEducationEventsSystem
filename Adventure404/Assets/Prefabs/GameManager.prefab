@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5515362389876010863}
   - component: {fileID: 1274966312993047559}
+  - component: {fileID: -8656279544173702122}
+  - component: {fileID: -5172775766327736125}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -48,3 +50,33 @@ MonoBehaviour:
   MoveSpeed: 1
   SizeMultiplier: 1
   CoinsDropped: 1
+--- !u!114 &-8656279544173702122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3468655770221443339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ffc778a016d1c648835bf287d8baf05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EnemyToSpawn: {fileID: 8020980789284885479, guid: 616bcdc61bcbc524ea86d3151e3ffa79, type: 3}
+  SpawnPerWave: 60
+  SpawnIncrement: 1
+  SpawnDistance: 40
+  TimeBetweenWaves: 2
+--- !u!114 &-5172775766327736125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3468655770221443339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67da50704784bb748aa280630bed83d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Speed: 20

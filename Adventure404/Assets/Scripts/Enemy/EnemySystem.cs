@@ -32,10 +32,6 @@ partial struct EnemySystem : ISystem
             {
                 MoveEnemy(ref state, e, playerTransform);
             }
-            //if (entityManager.HasComponent<EnemyStatsComponent>(e))
-            //{
-            //    Debug.Log("Enemy Stats Found");
-            //}
         }
     }
 
