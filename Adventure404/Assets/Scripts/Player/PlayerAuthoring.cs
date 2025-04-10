@@ -8,6 +8,8 @@ public class PlayerAuthoring : MonoBehaviour
     public float MoveSpeed = 1f;
     public GameObject MissilePrefab;
     public int Coins = 0;
+    public float TimeSinceLastMissile = 0f;
+    public float MissileCooldown = .1f;
 
     public class PlayerBaker : Baker<PlayerAuthoring>
     {
@@ -17,8 +19,10 @@ public class PlayerAuthoring : MonoBehaviour
             AddComponent(player, new PlayerComponent
             {
                 MoveSpeed = authoring.MoveSpeed,
-                MissilePrefab = GetEntity(authoring.MissilePrefab, TransformUsageFlags.None),
-                Coins = authoring.Coins
+                MissilePrefab = GetEntity(authoring.MissilePrefab, TransformUsageFlags.Dynamic),
+                Coins = authoring.Coins,
+                TimeSinceLastMissile = authoring.TimeSinceLastMissile,
+                MissileCooldown = authoring.MissileCooldown
             });
         }
     }

@@ -17,7 +17,7 @@ partial struct EnemySystem : ISystem
         
     }
 
-    [BurstCompile]
+    //[BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         entityManager = state.EntityManager;

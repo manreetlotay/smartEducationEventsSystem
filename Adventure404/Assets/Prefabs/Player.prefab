@@ -124,3 +124,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MoveSpeed: 1
   MissilePrefab: {fileID: 3391455489609318460, guid: 99755845fc34cb142b1676dd8cabcf58, type: 3}
+  Coins: 0
+  TimeSinceLastMissile: 0
+  MissileCooldown: 1

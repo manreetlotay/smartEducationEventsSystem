@@ -3,6 +3,8 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Mathematics;
 using Unity.Collections;
+using System;
+using Unity.Burst;
 
 public partial struct PlayerSystem : ISystem
 {
@@ -11,7 +13,7 @@ public partial struct PlayerSystem : ISystem
     private Entity input;
     private PlayerComponent playerComponent;
     private InputComponent inputComponent;
-
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         entityManager = state.EntityManager;
@@ -22,6 +24,7 @@ public partial struct PlayerSystem : ISystem
         inputComponent = entityManager.GetComponentData<InputComponent>(input);
 
         Move(ref state);
+        FireMissile(ref state);
     }
 
     private void Move(ref SystemState state)
@@ -51,6 +54,28 @@ public partial struct PlayerSystem : ISystem
         entityManager.SetComponentData(player, playerTransform);
     }
 
+    private void FireMissile(ref SystemState state)
+    {
+        float remainingCooldown = playerComponent.MissileCooldown - playerComponent.TimeSinceLastMissile;
+
+        if (remainingCooldown < 0f & inputComponent.MissileIsPressed)
+        {
+            playerComponent.TimeSinceLastMissile = 0f;
+            Entity missileEntity = entityManager.Instantiate(playerComponent.MissilePrefab);
+            LocalTransform playerTransform = entityManager.GetComponentData<LocalTransform>(player);
+            LocalTransform missileTransform = entityManager.GetComponentData<LocalTransform>(missileEntity);
+
+            missileTransform.Position = new float3(playerTransform.Position.x, playerTransform.Position.y, 0f);
+            entityManager.SetComponentData(missileEntity, missileTransform);
+        }
+        else
+        {
+            playerComponent.TimeSinceLastMissile += SystemAPI.Time.DeltaTime;
+        }
+
+        entityManager.SetComponentData(player, playerComponent);
+    }
+
     private void DownSprite(ref SystemState state)
     {
 
@@ -67,11 +92,6 @@ public partial struct PlayerSystem : ISystem
     }
 
     private void RightSprite(ref SystemState state)
-    {
-
-    }
-
-    private void FireMissile(ref SystemState state)
     {
 
     }
